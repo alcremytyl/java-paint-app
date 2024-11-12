@@ -5,7 +5,6 @@
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -17,11 +16,9 @@ public class Main extends Application {
 
         var pane = new StackPane();
         var toolbox = new HBox();
+        var gp = Components.createColorPicker();
 
-        toolbox.getChildren().addAll(
-            new Button("button1"),
-            new Button("buton22")
-        );
+        toolbox.getChildren().addAll(gp);
 
         pane.getChildren().addAll(toolbox);
 

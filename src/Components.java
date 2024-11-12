@@ -1,4 +1,5 @@
 
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
 /*
@@ -11,7 +12,7 @@ import javafx.scene.layout.GridPane;
  */
 public class Components {
 
-    String[][] colors = {
+    static final String[][] colors = {
         {"#2E2E2E", "#7F7F7F",
             "#FF7F7F", "#FFB3B3",
             "#FFB366", "#FFEB99",
@@ -23,26 +24,41 @@ public class Components {
             "#4D9933", "#80E080",
             "#4D66CC", "#99CCFF"
         }
-
     };
 
+    static final int COLORS_WIDTH = colors[0].length;
+    static final int COLORS_HEIGHT = colors.length;
+
     // Java 13+ feature
-    String style_format = """
+    static final String STYLE_FORMAT = """
         -fx-background-color: %s;
-        -fx-shape: 'M 0,10 A 10,10 0 1,1 20,10 A 10,10 0 1,1 0,10 Z';" +
+        -fx-shape: 'M 0,10 A 10,10 0 1,1 20,10 A 10,10 0 1,1 0,10 Z';
         -fx-padding: 0; -fx-min-width: 50px; -fx-min-height: 50px;
     """;
 
-    public void createColorPicker() {
+    // TODO: add event listeners
+    static public GridPane createColorPicker() {
         var grid = new GridPane(8, 3);
         grid.setHgap(10);
         grid.setVgap(10);
 
-//        for (int r = 0; r < 3; r++) {
-//            for (int c = 0; c < 8; c++) {
-//                var b = new Button();
-//                b.setStyle(String.format(style_format, colors[c][r]));
-//            }
-//        }
+        System.out.println("before pane add");
+
+        for (int r = 0; r < COLORS_HEIGHT; r++) {
+            System.out.println("    in pane row build");
+
+            var buttons = new Button[COLORS_WIDTH];
+
+            for (int c = 0; c < COLORS_WIDTH; c++) {
+                System.out.println("        inner pane add");
+
+                var b = new Button();
+                b.setStyle(String.format(STYLE_FORMAT, colors[r][c]));
+                buttons[c] = b;
+            }
+            grid.addRow(r, buttons);
+        }
+
+        return grid;
     }
 }
