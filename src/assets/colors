@@ -1,0 +1,15 @@
+2x10
+darkest to brightest -> left to right top to bottom
+
+Row 1:
+"#2E2E2E", "#7F7F7F",
+"#FF7F7F", "#FFB3B3",
+"#FFB366", "#FFEB99",
+"#66B266", "#B3FFB3",
+"#6666FF", "#B3B3FF",
+Row 2:
+"#4D4D4D", "#A3A3A3",
+"#FF4D4D", "#FF9999",
+"#FF9900", "#FFCC66",
+"#4D9933", "#80E080",
+"#4D66CC", "#99CCFF" 
