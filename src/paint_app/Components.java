@@ -1,3 +1,4 @@
+package paint_app;
 
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
