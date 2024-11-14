@@ -11,24 +11,25 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage stage) {
-
-        var pane = new StackPane();
+        // TODO: get stylesheets working
+        var root = new StackPane();
+        var scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
         var toolbox = new HBox();
         var gp = Components.createColorPicker();
 
-        toolbox.getChildren().addAll(gp);
+//        toolbox.getChildren().addAll(gp);
+//
+//        gp.getChildren().addAll(toolbox);
 
-        pane.getChildren().addAll(toolbox);
-
-        stage.setScene(new Scene(pane, Constants.WIDTH, Constants.WIDTH));
+        stage.setScene(scene);
         stage.setTitle("Paint App");
 
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
