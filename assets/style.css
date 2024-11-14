@@ -3,7 +3,7 @@
 }
 
 .color-picker-grid {
-    -fx-background-color: ;
+    /*-fx-background-color: ;*/
     -fx-hgap: 15px;  /* Horizontal gap between buttons */
     -fx-vgap: 15px;  /* Vertical gap between buttons */
 }
