@@ -1,22 +1,20 @@
-.root {
-    -fx-background-color;
+.root-theme {
+    -fx-background-color: #24273a;
 }
 
 .color-picker-grid {
-    /*-fx-background-color: ;*/
-    -fx-hgap: 15px;  /* Horizontal gap between buttons */
-    -fx-vgap: 15px;  /* Vertical gap between buttons */
+    -fx-padding: 30px;
+    -fx-background-color: #363a4f;
+    -fx-hgap: 5px;
+    -fx-vgap: 5px;
 }
 
 .color-picker-button {
-    -fx-background-radius: 50%; /* Makes the button circular */
-    -fx-min-width: 20px; /* Minimum width */
-    -fx-min-height: 20px; /* Minimum height */
-    -fx-pref-width: 20px; /* Preferred width */
-    -fx-pref-height: 20px; /* Preferred height */
-    -fx-border-radius: 100%; /* Rounded border */
-    -fx-border-width: 1px; /* Border width */
-    -fx-border-color: black; /* Border color */
-    -fx-background-color: #ffffff; /* Default background color */
+    -fx-min-width: 20px;
+    -fx-min-height: 20px;
+    -fx-max-width: 20px;
+    -fx-max-height: 20px;
+    -fx-background-radius: 100%;
+    -fx-border-width: 2px;
+    -fx-border-radius: 100%;
 }
-
