@@ -1,25 +1,26 @@
-package paint_app;/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+package paint_app;
 
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
 /* TODO
- * base UI off this
- * https://catppuccin.com/palette#Macchiato
- *
- * add brush
+ * toolbox
+ * - brushes
+ * - color picker logic
+ * layer implementation
+ * consult the drawing for other UI aspects to do
+ * everything else
  */
 
+/* References
+ * css https://openjfx.io/javadoc/18/javafx.graphics/javafx/scene/doc-files/cssref.html
+ * docs https://fxdocs.github.io/docs/html5/
+ * API https://openjfx.io/javadoc/23/
+ * colors https://catppuccin.com/palette#Macchiato
+ */
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -28,21 +29,18 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        var root = new StackPane();
+        var root = new VBox();
         var scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-        var toolbox = new HBox();
-        toolbox.setMaxHeight(scene.getHeight() / 5);
-        toolbox.setAlignment(Pos.TOP_CENTER);
-        toolbox.setSpacing(10);
+        var toolbox = new Toolbox();
+        // 13.5% of screen
+        toolbox.setMaxHeight(Constants.HEIGHT * 27 / 200.0);
+        toolbox.setMinHeight(Constants.HEIGHT * 27 / 200.0);
 
-        var tl_placeholder = new Rectangle(50, 20, Color.RED);
-        var t2_placeholder = new Rectangle(toolbox.getWidth() / 4, toolbox.getHeight(), Color.PALEGREEN);
-        var color_picker = Components.createColorPicker();
-
-        toolbox.getChildren().addAll(tl_placeholder, color_picker, t2_placeholder);
-
-        System.out.println(toolbox.getChildren());
+        stage.setOnShown(e -> {
+            System.out.println(toolbox.getHeight());
+            System.out.println(toolbox.getChildren().get(1));
+        });
 
         root.getChildren().add(toolbox);
         root.getStylesheets().add("style.css");

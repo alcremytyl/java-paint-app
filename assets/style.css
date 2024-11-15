@@ -2,19 +2,13 @@
     -fx-background-color: #24273a;
 }
 
-.color-picker-grid {
-    -fx-padding: 30px;
-    -fx-background-color: #363a4f;
-    -fx-hgap: 5px;
-    -fx-vgap: 5px;
+
+.label {
+    -fx-text-fill: #cad3f5;
 }
 
-.color-picker-button {
-    -fx-min-width: 20px;
-    -fx-min-height: 20px;
-    -fx-max-width: 20px;
-    -fx-max-height: 20px;
-    -fx-background-radius: 100%;
-    -fx-border-width: 2px;
-    -fx-border-radius: 100%;
+.toolbox-label {
+    -fx-font-style: italic;
+    -fx-font-size: 14px;
+    -fx-text-alignment: center;
 }
