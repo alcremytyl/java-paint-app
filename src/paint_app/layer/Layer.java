@@ -2,18 +2,15 @@ package paint_app.layer;
 
 import javafx.scene.canvas.Canvas;
 
-public class Layer {
+public class Layer extends Canvas implements Comparable<Layer> {
     String name;
     int priority;
-    Canvas canvas;
 
-    Layer() {
-    }
-
-    Layer(String name, int priority, Canvas canvas) {
+    public Layer(String name, int priority) {
+        super();
+        setStyle("-fx-background-color: transparent;");
         this.name = name;
         this.priority = priority;
-        this.canvas = canvas;
     }
 
     public String getName() {
@@ -34,12 +31,8 @@ public class Layer {
         return this;
     }
 
-    public Canvas getCanvas() {
-        return canvas;
-    }
-
-    public Layer setCanvas(Canvas canvas) {
-        this.canvas = canvas;
-        return this;
+    @Override
+    public int compareTo(Layer o) {
+        return Integer.compare(this.priority, o.getPriority());
     }
 }
