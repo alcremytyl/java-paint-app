@@ -2,11 +2,15 @@ package paint_app;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import paint_app.components.Tools;
+import paint_app.components.Workspace;
 
 /* TODO
  * toolbox
@@ -46,7 +50,7 @@ public class Main extends Application {
     public void start(Stage stage) {
         var root = new VBox();
         root.getStylesheets().add("style.css");
-        root.getStyleClass().add("root-theme");
+        root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
         root.setMinSize(Globals.WIDTH, Globals.HEIGHT);
 
         var scene = new Scene(root, Globals.WIDTH, Globals.HEIGHT);
@@ -62,9 +66,9 @@ public class Main extends Application {
         bottom_panel.minHeightProperty().bind(root.heightProperty());
         bottom_panel.maxHeightProperty().bind(root.heightProperty());
 
-        var workspace = makePlaceholder(1, 1, Color.PALEGOLDENROD);
-        workspace.widthProperty().bind(bottom_panel.widthProperty().subtract(210));
-        workspace.heightProperty().bind(bottom_panel.heightProperty());
+        var workspace = new Workspace();
+        workspace.minWidthProperty().bind(bottom_panel.widthProperty().subtract(210));
+        workspace.minHeightProperty().bind(bottom_panel.heightProperty());
 
         var dock = makePlaceholder(200, 100, Color.PALEGREEN);
         dock.minWidth(200);

@@ -8,5 +8,6 @@ module paint.app {
     requires java.desktop;
 
     exports paint_app;
-    exports paint_app.layer;
+    exports paint_app.components.layer;
+    exports paint_app.components;
 }

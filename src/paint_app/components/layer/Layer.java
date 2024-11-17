@@ -1,4 +1,4 @@
-package paint_app.layer;
+package paint_app.components.layer;
 
 import javafx.scene.canvas.Canvas;
 

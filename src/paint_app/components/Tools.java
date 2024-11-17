@@ -1,14 +1,18 @@
-package paint_app;
+package paint_app.components;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import paint_app.InterfaceColors;
+
+import java.util.function.Function;
 
 public class Tools extends HBox {
     static final String DARK_STROKE = "#181926";
@@ -26,34 +30,31 @@ public class Tools extends HBox {
             "#4D66CC", "#99CCFF"
     };
 
-    Tools() {
+    public Tools() {
         getStyleClass().add("toolbox-label");
         setAlignment(Pos.TOP_CENTER);
         setSpacing(30);
         setPadding(new Insets(20, 20, 20, 0));
         setBackground(new Background(new BackgroundFill(Color.web("#363a4f"), null, null)));
 
-        var bl_placeholder = new VBox();
-        bl_placeholder.setAlignment(Pos.CENTER);
-        var tl_placeholder = new Rectangle(200, 50);
-        tl_placeholder.setFill(Color.PALEGOLDENROD);
-        var ll_placeholder = new Label("placeholder left");
-        ll_placeholder.setPadding(new Insets(5));
-        bl_placeholder.getChildren().addAll(tl_placeholder, ll_placeholder);
+        var brushes = gridHelper("brushes", 0, i -> {
+            return new Rectangle();
+        });
 
-        var br_placeholder = new VBox();
-        var tr_placeholder = new Rectangle(200, 50);
-        tr_placeholder.setFill(Color.PALEGREEN);
-        var lr_placeholder = new Label("placeholder right");
-        lr_placeholder.setPadding(new Insets(5));
-        br_placeholder.getChildren().addAll(tr_placeholder, lr_placeholder);
-        br_placeholder.setAlignment(Pos.CENTER);
+        var shapes = gridHelper("shapes", 0, i -> {
+            return new Rectangle();
+        });
 
-        var color_picker = createColorPicker();
-
+        // TODO: add event listeners/custom type for pickers
+        var color_picker = gridHelper("color picker", colors.length, (i) -> {
+            var circle = new Circle(12, Color.web(colors[i]));
+            circle.setStroke(InterfaceColors.Crust);
+            circle.setStrokeWidth(2);
+            return circle;
+        });
 
         var children = getChildren();
-        children.addAll(bl_placeholder, color_picker, br_placeholder);
+        children.addAll(brushes, shapes, color_picker);
 
         for (int i = getChildren().size() - 1; i > 0; i--) {
             var sep = new Separator(Orientation.VERTICAL);
@@ -61,8 +62,7 @@ public class Tools extends HBox {
         }
     }
 
-    // TODO: add event listeners
-    static VBox createColorPicker() {
+    static VBox gridHelper(String label_text, int size, Function<Integer, Node> generator) {
         var box = new VBox();
         box.setAlignment(Pos.CENTER);
 
@@ -70,26 +70,15 @@ public class Tools extends HBox {
         grid.setHgap(5);
         grid.setVgap(5);
 
-        for (int i = 0; i < colors.length; i++) {
-            final var color = Color.web(colors[i]);
-            final var circle_stroke = Color.web(color.getBrightness() >= 0.5 ? DARK_STROKE : BRIGHT_STROKE);
-
-            var circle = new Circle(12, color);
-            circle.setStroke(circle_stroke);
-            circle.setStrokeWidth(2);
-
-            grid.add(circle, i / 2, i % 2);
+        for (int i = 0; i < size; i++) {
+            var node = generator.apply(i);
+            grid.add(node, i / 2, i % 2);
         }
 
-        var text = new Label("color picker");
+        var text = new Label(label_text);
         text.setPadding(new Insets(5));
 
         box.getChildren().addAll(grid, text);
-        return box;
-    }
-
-    static VBox createBrushPicker() {
-        var box = new VBox();
         return box;
     }
 }

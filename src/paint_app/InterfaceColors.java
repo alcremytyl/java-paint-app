@@ -2,7 +2,7 @@ package paint_app;
 
 import javafx.scene.paint.Color;
 
-/// Colors from Catppuccin's [Machiatto](https://catppuccin.com/palette#Macchiato)
+/// Colors from Catppuccin's [Macchiatto](https://catppuccin.com/palette#Macchiato)
 public class InterfaceColors {
     public static final Color Rosewater = Color.web("#f4dbd6");
     public static final Color Flamingo = Color.web("#f0c6c6");
