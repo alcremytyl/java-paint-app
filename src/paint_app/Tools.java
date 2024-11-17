@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-public class Toolbox extends HBox {
+public class Tools extends HBox {
     static final String DARK_STROKE = "#181926";
     static final String BRIGHT_STROKE = "#cad3f5";
     static final String[] colors = {
@@ -26,7 +26,7 @@ public class Toolbox extends HBox {
             "#4D66CC", "#99CCFF"
     };
 
-    Toolbox() {
+    Tools() {
         getStyleClass().add("toolbox-label");
         setAlignment(Pos.TOP_CENTER);
         setSpacing(30);

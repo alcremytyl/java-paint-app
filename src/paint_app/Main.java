@@ -3,12 +3,10 @@ package paint_app;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import paint_app.layer.Layer;
 
 /* TODO
  * toolbox
@@ -21,6 +19,7 @@ import paint_app.layer.Layer;
  *
  * maybe:
  * - button to move current layer up/down
+ *
  */
 
 /* References
@@ -35,38 +34,50 @@ public class Main extends Application {
         launch(args);
     }
 
-    static Rectangle makePlaceholder(Region root) {
+    public static Rectangle makePlaceholder(int w, int h, Color c) {
         var rect = new Rectangle();
-        rect.widthProperty().bind(root.widthProperty());
-        rect.heightProperty().bind(root.heightProperty());
-        rect.setFill(Color.RED);
-
-
+        rect.setWidth(w);
+        rect.setHeight(h);
+        rect.setFill(c);
         return rect;
     }
 
     @Override
     public void start(Stage stage) {
-        var root = new HBox();
+        var root = new VBox();
         root.getStylesheets().add("style.css");
         root.getStyleClass().add("root-theme");
+        root.setMinSize(Globals.WIDTH, Globals.HEIGHT);
 
-        var lroot = new VBox();
-        var scene = new Scene(root, Globals.WIDTH, Globals.HEIGHT);
+        var scene = new Scene(root, 500, 500);
 
-        var toolbox = new Toolbox();
-        // 13.5% of screen
-        toolbox.setMaxHeight(Globals.HEIGHT * 27 / 200.0);
-        toolbox.setMinHeight(Globals.HEIGHT * 27 / 200.0);
+        var top_panel = new Tools();
+        top_panel.minWidthProperty().bind(root.widthProperty());
+        top_panel.maxWidthProperty().bind(root.widthProperty());
 
-        var placeholder_layer = new Layer();
+        var bottom_panel = new HBox();
+        bottom_panel.setSpacing(10);
+        bottom_panel.minWidthProperty().bind(root.widthProperty());
+        bottom_panel.maxWidthProperty().bind(root.widthProperty());
+        bottom_panel.minHeightProperty().bind(root.heightProperty());
+        bottom_panel.maxHeightProperty().bind(root.heightProperty());
 
-        root.getChildren().addAll(lroot, makePlaceholder(root));
-        lroot.getChildren().addAll(toolbox, placeholder_layer);
+        var workspace = makePlaceholder(1, 1, Color.PALEGOLDENROD);
+        workspace.widthProperty().bind(bottom_panel.widthProperty().subtract(210));
+        workspace.heightProperty().bind(bottom_panel.heightProperty());
+
+        var dock = makePlaceholder(200, 100, Color.PALEGREEN);
+        dock.minWidth(200);
+        dock.maxWidth(200);
+        dock.heightProperty().bind(bottom_panel.heightProperty());
+
+        root.getChildren().addAll(top_panel, bottom_panel);
+        bottom_panel.getChildren().addAll(workspace, dock);
 
         stage.setScene(scene);
         stage.setTitle("Paint App");
-
+        stage.setMinWidth(Globals.WIDTH);
+        stage.setMinHeight(Globals.HEIGHT);
         stage.show();
     }
 }
