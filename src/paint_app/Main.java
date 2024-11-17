@@ -49,7 +49,7 @@ public class Main extends Application {
         root.getStyleClass().add("root-theme");
         root.setMinSize(Globals.WIDTH, Globals.HEIGHT);
 
-        var scene = new Scene(root, 500, 500);
+        var scene = new Scene(root, Globals.WIDTH, Globals.HEIGHT);
 
         var top_panel = new Tools();
         top_panel.minWidthProperty().bind(root.widthProperty());

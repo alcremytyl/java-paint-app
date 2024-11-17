@@ -62,7 +62,7 @@ public class Tools extends HBox {
     }
 
     // TODO: add event listeners
-    static public VBox createColorPicker() {
+    static VBox createColorPicker() {
         var box = new VBox();
         box.setAlignment(Pos.CENTER);
 
@@ -88,6 +88,8 @@ public class Tools extends HBox {
         return box;
     }
 
-    void scaleChildren() {
+    static VBox createBrushPicker() {
+        var box = new VBox();
+        return box;
     }
 }
