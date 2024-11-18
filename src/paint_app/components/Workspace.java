@@ -42,12 +42,14 @@ public class Workspace extends StackPane {
             var delta = (e.getDeltaY() > 0 ? 1 : -1) * Globals.ZOOM_SCALE_FACTOR;
             var new_x = scale.getX() + delta;
             var new_y = scale.getY() + delta;
-            System.out.println(new_x);
-            System.out.println();
+
+            System.out.println("Attempting scale: " + new_x);
+            System.out.println("Is valid scale range: " + (new_x >= Globals.ZOOM_SCALE_MIN && new_x <= Globals.ZOOM_SCALE_MAX));
 
             if (new_x >= Globals.ZOOM_SCALE_MIN && new_x <= Globals.ZOOM_SCALE_MAX) {
                 scale.setX(new_x);
                 scale.setY(new_y);
+                layers.getTransforms().setAll(scale);
             }
         });
 
