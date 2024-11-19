@@ -6,6 +6,7 @@ module paint.app {
     requires javafx.swt;
     requires javafx.media;
     requires java.desktop;
+    requires jdk.xml.dom;
 
     exports paint_app;
     exports paint_app.components.layer;

@@ -9,14 +9,16 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import paint_app.InterfaceColors;
 
+import java.util.EnumMap;
 import java.util.function.Function;
 
 public class Tools extends HBox {
-    static final String DARK_STROKE = "#181926";
-    static final String BRIGHT_STROKE = "#cad3f5";
+
     static final String[] colors = {
             "#2E2E2E", "#7F7F7F",
             "#4D4D4D", "#A3A3A3",
@@ -29,6 +31,29 @@ public class Tools extends HBox {
             "#6666FF", "#B3B3FF",
             "#4D66CC", "#99CCFF"
     };
+    // TODO: replace with custom shape type & maybe add hover text
+    // FIXME: https://stackoverflow.com/questions/67607416/what-is-the-best-way-to-statically-initialize-an-enummap-in-java don't keep it as is
+    static final EnumMap<InterfaceShape, Shape> shapes = new EnumMap<>(InterfaceShape.class);
+
+    static {
+        var arrow = new Polygon(
+                50.0, 10.0,   // top point of the arrow
+                90.0, 50.0,   // right point of the arrowhead
+                50.0, 90.0,   // bottom point of the arrow
+                50.0, 60.0,   // middle left (shaft start)
+                10.0, 60.0    // left point of the arrow
+        );
+        shapes.put(InterfaceShape.CIRCLE, new Circle(18, InterfaceColors.Red));
+        shapes.put(InterfaceShape
+                .RECTANGLE, new Rectangle(36, 36, InterfaceColors.Green));
+        shapes.put(InterfaceShape.POLYGON, new Polygon(10, 0, 20, 20, 0, 20));
+        shapes.put(InterfaceShape.ARROW, arrow);
+
+        for (var s : shapes.values()) {
+            s.setStroke(InterfaceColors.Crust);
+            s.setStrokeWidth(2);
+        }
+    }
 
     public Tools() {
         getStyleClass().add("toolbox-label");
@@ -37,16 +62,17 @@ public class Tools extends HBox {
         setPadding(new Insets(20, 20, 20, 0));
         setBackground(new Background(new BackgroundFill(Color.web("#363a4f"), null, null)));
 
-        var brushes = gridHelper("brushes", 0, i -> {
+        var brush_grid = gridHelper("brushes", 0, i -> {
             return new Rectangle();
+
         });
 
-        var shapes = gridHelper("shapes", 0, i -> {
-            return new Rectangle();
+        var shape_grid = gridHelper("shapes", shapes.size(), i -> {
+            final var k = InterfaceShape.values()[i];
+            return shapes.get(k);
         });
 
-        // TODO: add event listeners/custom type for pickers
-        var color_picker = gridHelper("color picker", colors.length, (i) -> {
+        var color_picker = gridHelper("color picker", colors.length, i -> {
             var circle = new Circle(12, Color.web(colors[i]));
             circle.setStroke(InterfaceColors.Crust);
             circle.setStrokeWidth(2);
@@ -54,7 +80,7 @@ public class Tools extends HBox {
         });
 
         var children = getChildren();
-        children.addAll(brushes, shapes, color_picker);
+        children.addAll(brush_grid, shape_grid, color_picker);
 
         for (int i = getChildren().size() - 1; i > 0; i--) {
             var sep = new Separator(Orientation.VERTICAL);
@@ -72,7 +98,16 @@ public class Tools extends HBox {
 
         for (int i = 0; i < size; i++) {
             var node = generator.apply(i);
-            grid.add(node, i / 2, i % 2);
+            if (node == null) {
+                System.out.printf("found null at [name=%s,shape=%s]\n", label_text, InterfaceShape.values()[i]);
+                continue;
+            }
+
+            if (size <= 10) {
+                grid.add(node, i, 0);
+            } else {
+                grid.add(node, i / 2, i % 2);
+            }
         }
 
         var text = new Label(label_text);
@@ -80,5 +115,10 @@ public class Tools extends HBox {
 
         box.getChildren().addAll(grid, text);
         return box;
+    }
+
+    enum InterfaceShape {
+        CIRCLE, RECTANGLE, POLYGON, ARROW
+
     }
 }
