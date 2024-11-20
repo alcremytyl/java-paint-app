@@ -8,10 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 import paint_app.InterfaceColors;
 
 import java.util.EnumMap;
@@ -37,17 +34,23 @@ public class Tools extends HBox {
 
     static {
         final var poly = new Polygon(0, 0, -35, 0, -35.0 / 2, -35, 0, 0);
-        poly.setStroke(InterfaceColors.Crust);
-        poly.setFill(InterfaceColors.Mauve);
+        final var arrow = new Polyline(0, 0, 0, -25, -5, -20, 0, -25, 5, -20);
 
-        shapes.put(InterfaceShape.CIRCLE, new Circle(18, InterfaceColors.Red));
-        shapes.put(InterfaceShape.RECTANGLE, new Rectangle(36, 36, InterfaceColors.Green));
+        shapes.put(InterfaceShape.CIRCLE, new Circle(18, Color.WHITESMOKE));
+        shapes.put(InterfaceShape.RECTANGLE, new Rectangle(36, 36, Color.WHITESMOKE));
         shapes.put(InterfaceShape.POLYGON, poly);
 
         for (var s : shapes.values()) {
-            s.setStroke(InterfaceColors.Crust);
-            s.setStrokeWidth(2);
+//            s.setStroke(InterfaceColors.Crust);
+            s.setFill(Color.WHITESMOKE);
+//            s.setStrokeWidth(2);
         }
+
+        shapes.put(InterfaceShape.ARROW, arrow);
+
+        arrow.setStrokeWidth(5);
+        arrow.setStroke(Color.WHITESMOKE);
+        arrow.setStrokeLineJoin(StrokeLineJoin.ROUND);
     }
 
     public Tools() {
@@ -113,7 +116,7 @@ public class Tools extends HBox {
     }
 
     enum InterfaceShape {
-        CIRCLE, RECTANGLE, POLYGON
+        CIRCLE, RECTANGLE, POLYGON, ARROW
 
     }
 }
