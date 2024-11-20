@@ -31,6 +31,7 @@ import paint_app.components.Workspace;
  * docs https://fxdocs.github.io/docs/html5/
  * API https://openjfx.io/javadoc/23/
  * colors https://catppuccin.com/palette#Macchiato
+ * icons https://icons8.com/icon/set/rectangle/ios-filled
  */
 
 public class Main extends Application {

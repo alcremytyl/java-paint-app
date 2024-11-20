@@ -36,18 +36,13 @@ public class Tools extends HBox {
     static final EnumMap<InterfaceShape, Shape> shapes = new EnumMap<>(InterfaceShape.class);
 
     static {
-        var arrow = new Polygon(
-                50.0, 10.0,   // top point of the arrow
-                90.0, 50.0,   // right point of the arrowhead
-                50.0, 90.0,   // bottom point of the arrow
-                50.0, 60.0,   // middle left (shaft start)
-                10.0, 60.0    // left point of the arrow
-        );
+        final var poly = new Polygon(0, 0, -35, 0, -35.0 / 2, -35, 0, 0);
+        poly.setStroke(InterfaceColors.Crust);
+        poly.setFill(InterfaceColors.Mauve);
+
         shapes.put(InterfaceShape.CIRCLE, new Circle(18, InterfaceColors.Red));
-        shapes.put(InterfaceShape
-                .RECTANGLE, new Rectangle(36, 36, InterfaceColors.Green));
-        shapes.put(InterfaceShape.POLYGON, new Polygon(10, 0, 20, 20, 0, 20));
-        shapes.put(InterfaceShape.ARROW, arrow);
+        shapes.put(InterfaceShape.RECTANGLE, new Rectangle(36, 36, InterfaceColors.Green));
+        shapes.put(InterfaceShape.POLYGON, poly);
 
         for (var s : shapes.values()) {
             s.setStroke(InterfaceColors.Crust);
@@ -118,7 +113,7 @@ public class Tools extends HBox {
     }
 
     enum InterfaceShape {
-        CIRCLE, RECTANGLE, POLYGON, ARROW
+        CIRCLE, RECTANGLE, POLYGON
 
     }
 }
