@@ -2,14 +2,20 @@ package paint_app;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 
 import java.util.logging.Logger;
 
 public class AppState {
     private static AppState INSTANCE;
-    private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
-    private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
+
+    // background for smoother experience binding to buttons
+    // use getFills().getFirst() when drawing
+    private final SimpleObjectProperty<Background> primary_color = new SimpleObjectProperty<>(new Background(new BackgroundFill(Color.BLACK, null, null)));
+    private final SimpleObjectProperty<Background> secondary_color = new SimpleObjectProperty<>(new Background(new BackgroundFill(Color.WHITE, null, null)));
+
     private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
     private Logger logger;
 
@@ -35,11 +41,11 @@ public class AppState {
         });
     }
 
-    public SimpleObjectProperty<Color> primaryColorProperty() {
+    public SimpleObjectProperty<Background> primaryColorProperty() {
         return this.primary_color;
     }
 
-    public SimpleObjectProperty<Color> secondaryColorProperty() {
+    public SimpleObjectProperty<Background> secondaryColorProperty() {
         return this.secondary_color;
     }
 

@@ -15,39 +15,92 @@ import paint_app.AppState;
 import java.util.function.Function;
 
 public class Tools extends HBox {
-    static final String[] COLORS = {
-            "#000000", "#FFFFFF", "#FF0000", "#00FF00",
-            "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF",
-            "#D3D3D3", "#A9A9A9", "#FF6347", "#90EE90",
-            "#ADD8E6", "#FFFFE0", "#FFB6C1", "#E0FFFF",
-            "#8B0000", "#006400", "#00008B", "#B8860B",
-            "#8B008B", "#008B8B", "#FFA500", "#FFC0CB",
-            "#A52A2A", "#8A2BE2", "#808000", "#D2B48C"
+    // TODO: get a nicer pallet
+    static final Color[] COLORS = {
+            Color.web("#000000"), Color.web("#FFFFFF"), Color.web("#FF0000"), Color.web("#00FF00"),
+            Color.web("#0000FF"), Color.web("#FFFF00"), Color.web("#FF00FF"), Color.web("#00FFFF"),
+            Color.web("#D3D3D3"), Color.web("#A9A9A9"), Color.web("#FF6347"), Color.web("#90EE90"),
+            Color.web("#ADD8E6"), Color.web("#FFFFE0"), Color.web("#FFB6C1"), Color.web("#E0FFFF"),
+            Color.web("#8B0000"), Color.web("#006400"), Color.web("#00008B"), Color.web("#B8860B"),
+            Color.web("#8B008B"), Color.web("#008B8B"), Color.web("#FFA500"), Color.web("#FFC0CB"),
+            Color.web("#A52A2A"), Color.web("#8A2BE2"), Color.web("#808000"), Color.web("#D2B48C")
     };
     static final AppState AppState = paint_app.AppState.getInstance();
 
     public Tools() {
-
-        var colors = gridHelper("color picker", COLORS.length, i -> {
-            var btn = new Button(" ");
-            btn.setBackground(new Background(new BackgroundFill(Color.web(COLORS[i]), null, null)));
-            btn.setShape(new Circle(12));
-            btn.setOnMouseClicked(e -> {
-                // sets primary color to button's color
-                AppState.primaryColorProperty().set((Color) btn.getBackground().getFills().getFirst().getFill());
-            });
-
-            return btn;
-        });
-
-
-        getChildren().add(colors);
+        addColorInterface(this);
 
         for (int i = getChildren().size() - 1; i > 0; i--) {
             var sep = new Separator(Orientation.VERTICAL);
             getChildren().add(i, sep);
         }
     }
+
+    private static VBox createNodeGrid(String label_text, int size, Function<Integer, Node> generator) {
+        var box = new VBox();
+        box.setAlignment(Pos.CENTER);
+
+        var grid = new GridPane();
+        grid.setHgap(5);
+        grid.setVgap(5);
+
+        for (int i = 0; i < size; i++) {
+            var node = generator.apply(i);
+
+            if (size <= 10) {
+                grid.add(node, i, 0);
+            } else {
+                grid.add(node, i / 2, i % 2);
+            }
+        }
+
+        var text = new Label(label_text);
+        text.setPadding(new Insets(5));
+
+        box.getChildren().addAll(grid, text);
+        return box;
+    }
+
+    private static void addColorInterface(Pane n) {
+        final var colors = new HBox();
+        colors.setSpacing(10);
+        final var color_pair = new VBox();
+        final var primary_color = createColorButton(Color.BLACK);
+        primary_color.backgroundProperty().bind(AppState.primaryColorProperty());
+        final var secondary_color = createColorButton(Color.WHITE);
+        secondary_color.backgroundProperty().bind(AppState.secondaryColorProperty());
+
+        color_pair.getChildren().addAll(primary_color, secondary_color);
+
+
+        final var color_selector = createNodeGrid("color picker", COLORS.length, i -> {
+            var btn = createColorButton(COLORS[i]);
+            btn.setOnMouseClicked(e -> {
+                AppState.primaryColorProperty().set(btn.getBackground());
+            });
+
+            return btn;
+        });
+
+
+        colors.getChildren().addAll(color_pair, color_selector);
+        n.getChildren().add(colors);
+    }
+
+    private static Button createColorButton(Color c) {
+        final var btn = new Button(" ");
+        btn.setBackground(new Background(new BackgroundFill(c, null, null)));
+        btn.setShape(new Circle(12));
+        return btn;
+    }
+
+//    enum InterfaceShape {
+//        CIRCLE, RECTANGLE, POLYGON, ARROW
+//
+//    }
+}
+
+
 //    // TODO: replace with custom shape type & maybe add hover text
 //    // FIXME: https://stackoverflow.com/questions/67607416/what-is-the-best-way-to-statically-initialize-an-enummap-in-java don't keep it as is
 //    static final EnumMap<InterfaceShape, Shape> shapes = new EnumMap<>(InterfaceShape.class);
@@ -61,10 +114,10 @@ public class Tools extends HBox {
 //        shapes.put(InterfaceShape.POLYGON, poly);
 //
 //        for (var s : shapes.values()) {
-////            s.setStroke(InterfaceColors.Crust);
+/// /            s.setStroke(InterfaceColors.Crust);
 //            s.setFill(Color.WHITESMOKE);
 
-    /// /            s.setStrokeWidth(2);
+/// /            s.setStrokeWidth(2);
 //        }
 //
 //        shapes.put(InterfaceShape.ARROW, arrow);
@@ -107,33 +160,3 @@ public class Tools extends HBox {
 //        }
 //    }
 //
-    static VBox gridHelper(String label_text, int size, Function<Integer, Node> generator) {
-        var box = new VBox();
-        box.setAlignment(Pos.CENTER);
-
-        var grid = new GridPane();
-        grid.setHgap(5);
-        grid.setVgap(5);
-
-        for (int i = 0; i < size; i++) {
-            var node = generator.apply(i);
-
-            if (size <= 10) {
-                grid.add(node, i, 0);
-            } else {
-                grid.add(node, i / 2, i % 2);
-            }
-        }
-
-        var text = new Label(label_text);
-        text.setPadding(new Insets(5));
-
-        box.getChildren().addAll(grid, text);
-        return box;
-    }
-
-//    enum InterfaceShape {
-//        CIRCLE, RECTANGLE, POLYGON, ARROW
-//
-//    }
-}
