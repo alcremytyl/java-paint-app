@@ -6,6 +6,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import paint_app.components.Tools;
+
+import java.util.logging.Logger;
 
 /* TODO
  * toolbox
@@ -30,18 +33,26 @@ import javafx.stage.Stage;
  */
 
 public class Main extends Application {
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 800;
+
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage stage) {
+        final Logger logger = Logger.getLogger("Paint App");
+        AppState AppState = paint_app.AppState.getInstance();
+        AppState.attachLogger(logger);
+
         var root = new VBox();
 //        root.getStylesheets().add("style.css");
 //        root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 //        root.setMinSize(Globals.WIDTH, Globals.HEIGHT);
 //
-        var scene = new Scene(root, Globals.WIDTH, Globals.HEIGHT);
+        var scene = new Scene(root, WIDTH, HEIGHT);
 
         Rectangle top_panel = new Rectangle();
         top_panel.widthProperty().bind(root.widthProperty());
@@ -54,8 +65,9 @@ public class Main extends Application {
         bottom_panel.setFill(Color.LIGHTGREEN);
 
         // Add the panels to the VBox
-        root.getChildren().addAll(top_panel, bottom_panel);
+//        root.getChildren().addAll(top_panel, bottom_panel);
 
+        root.getChildren().addAll(new Tools());
 
 //        var top_panel = new Tools();
 //        top_panel.minWidthProperty().bind(root.widthProperty());
@@ -83,8 +95,7 @@ public class Main extends Application {
 
         stage.setScene(scene);
         stage.setTitle("Paint App");
-        stage.setWidth(Globals.WIDTH);
-        stage.setHeight(Globals.HEIGHT);
+        stage.sizeToScene();
         stage.setResizable(false);
         stage.show();
     }

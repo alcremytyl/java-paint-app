@@ -1,15 +1,16 @@
 package paint_app.components;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import paint_app.AppState;
 
 import java.util.function.Function;
 
@@ -23,16 +24,29 @@ public class Tools extends HBox {
             "#8B008B", "#008B8B", "#FFA500", "#FFC0CB",
             "#A52A2A", "#8A2BE2", "#808000", "#D2B48C"
     };
+    static final AppState AppState = paint_app.AppState.getInstance();
 
     public Tools() {
 
         var colors = gridHelper("color picker", COLORS.length, i -> {
-            var btn = new Button();
-            var c = new Circle(12);
-            c.setFill(Color.web(COLORS[i]));
-            btn.setShape(c);
+            var btn = new Button(" ");
+            btn.setBackground(new Background(new BackgroundFill(Color.web(COLORS[i]), null, null)));
+            btn.setShape(new Circle(12));
+            btn.setOnMouseClicked(e -> {
+                // sets primary color to button's color
+                AppState.primaryColorProperty().set((Color) btn.getBackground().getFills().getFirst().getFill());
+            });
+
             return btn;
         });
+
+
+        getChildren().add(colors);
+
+        for (int i = getChildren().size() - 1; i > 0; i--) {
+            var sep = new Separator(Orientation.VERTICAL);
+            getChildren().add(i, sep);
+        }
     }
 //    // TODO: replace with custom shape type & maybe add hover text
 //    // FIXME: https://stackoverflow.com/questions/67607416/what-is-the-best-way-to-statically-initialize-an-enummap-in-java don't keep it as is
