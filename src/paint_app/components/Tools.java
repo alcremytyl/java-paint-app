@@ -17,13 +17,22 @@ import java.util.function.Function;
 public class Tools extends HBox {
     // TODO: get a nicer pallet
     static final Color[] COLORS = {
-            Color.web("#000000"), Color.web("#FFFFFF"), Color.web("#FF0000"), Color.web("#00FF00"),
-            Color.web("#0000FF"), Color.web("#FFFF00"), Color.web("#FF00FF"), Color.web("#00FFFF"),
-            Color.web("#D3D3D3"), Color.web("#A9A9A9"), Color.web("#FF6347"), Color.web("#90EE90"),
-            Color.web("#ADD8E6"), Color.web("#FFFFE0"), Color.web("#FFB6C1"), Color.web("#E0FFFF"),
-            Color.web("#8B0000"), Color.web("#006400"), Color.web("#00008B"), Color.web("#B8860B"),
-            Color.web("#8B008B"), Color.web("#008B8B"), Color.web("#FFA500"), Color.web("#FFC0CB"),
-            Color.web("#A52A2A"), Color.web("#8A2BE2"), Color.web("#808000"), Color.web("#D2B48C")
+            Color.web("#000000"), Color.web("#FFFFFF"),
+            Color.web("#696969"), Color.web("#c0c0c0"),
+            Color.web("#800000"), Color.web("#FF0000"),
+            Color.web("#B22222"), Color.web("#FF6347"),
+            Color.web("#FF7F50"), Color.web("#FF8C00"),
+            Color.web("#FFA07A"), Color.web("#FFD700"),
+            Color.web("#FFFF00"), Color.web("#FFFACD"),
+            Color.web("#808000"), Color.web("#9ACD32"),
+            Color.web("#008000"), Color.web("#00FF00"),
+            Color.web("#32CD32"), Color.web("#98FB98"),
+            Color.web("#008080"), Color.web("#00FFFF"),
+            Color.web("#40E0D0"), Color.web("#E0FFFF"),
+            Color.web("#1E90FF"), Color.web("#87CEFA"),
+            Color.web("#000080"), Color.web("#0000FF"),
+            Color.web("#800080"), Color.web("#FF00FF"),
+            Color.web("#BA55D3"), Color.web("#EE82EE")
     };
     static final AppState AppState = paint_app.AppState.getInstance();
 
