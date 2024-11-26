@@ -2,6 +2,8 @@ package paint_app;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -51,7 +53,7 @@ public class Main extends Application {
 //        root.getStylesheets().add("style.css");
 //        root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 //        root.setMinSize(Globals.WIDTH, Globals.HEIGHT);
-//
+        root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
         var scene = new Scene(root, WIDTH, HEIGHT);
 
         Rectangle top_panel = new Rectangle();

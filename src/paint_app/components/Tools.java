@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import paint_app.AppState;
+import paint_app.InterfaceColors;
 
 import java.util.function.Function;
 
@@ -64,6 +65,8 @@ public class Tools extends HBox {
         }
 
         var text = new Label(label_text);
+        text.setTextFill(InterfaceColors.Text);
+        text.setStyle("-fx-font-size: 16px; -fx-font-style: italic;");
         text.setPadding(new Insets(5));
 
         box.getChildren().addAll(grid, text);
@@ -91,24 +94,26 @@ public class Tools extends HBox {
             return btn;
         });
 
+        final var sep = new Separator(Orientation.VERTICAL);
 
-        colors.getChildren().addAll(color_pair, color_selector);
+        colors.getChildren().addAll(color_pair, sep, color_selector);
         n.getChildren().add(colors);
     }
 
     private static Button createColorButton(Color c) {
         final var btn = new Button(" ");
+        // TODO: continue here
+        final var color = InterfaceColors.Crust;
+        final var style = String.format("-fx-border-color: %s; -fx-border-width: 2px;", . .toString().substring(2));
+        btn.setStyle(style);
         btn.setBackground(new Background(new BackgroundFill(c, null, null)));
         btn.setShape(new Circle(12));
         return btn;
     }
 
-//    enum InterfaceShape {
-//        CIRCLE, RECTANGLE, POLYGON, ARROW
-//
-//    }
 }
 
+//  Old code, delete later
 
 //    // TODO: replace with custom shape type & maybe add hover text
 //    // FIXME: https://stackoverflow.com/questions/67607416/what-is-the-best-way-to-statically-initialize-an-enummap-in-java don't keep it as is
