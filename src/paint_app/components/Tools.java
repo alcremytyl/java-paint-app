@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -76,39 +77,50 @@ public class Tools extends HBox {
     private static void addColorInterface(Pane n) {
         final var colors = new HBox();
         colors.setSpacing(10);
+
         final var color_pair = new VBox();
+
         final var primary_color = createColorButton(Color.BLACK);
-        primary_color.backgroundProperty().bind(AppState.primaryColorProperty());
+        primary_color.fillProperty().bind(AppState.primaryColorProperty());
+
         final var secondary_color = createColorButton(Color.WHITE);
-        secondary_color.backgroundProperty().bind(AppState.secondaryColorProperty());
+        secondary_color.fillProperty().bind(AppState.secondaryColorProperty());
 
         color_pair.getChildren().addAll(primary_color, secondary_color);
-
 
         final var color_selector = createNodeGrid("color picker", COLORS.length, i -> {
             var btn = createColorButton(COLORS[i]);
             btn.setOnMouseClicked(e -> {
-                AppState.primaryColorProperty().set(btn.getBackground());
+                switch (e.getButton()) {
+                    case MouseButton.PRIMARY:
+                        AppState.primaryColorProperty().set((Color) btn.getFill());
+                        break;
+                    case MouseButton.SECONDARY:
+                        AppState.secondaryColorProperty().set((Color) btn.getFill());
+                        break;
+                    default:
+
+
+                }
             });
 
             return btn;
         });
 
         final var sep = new Separator(Orientation.VERTICAL);
+        sep.setMaxHeight(60);
 
         colors.getChildren().addAll(color_pair, sep, color_selector);
         n.getChildren().add(colors);
     }
 
-    private static Button createColorButton(Color c) {
+    private static Circle createColorButton(Color c) {
         final var btn = new Button(" ");
-        // TODO: continue here
-        final var color = InterfaceColors.Crust;
-        final var style = String.format("-fx-border-color: %s; -fx-border-width: 2px;", . .toString().substring(2));
-        btn.setStyle(style);
+        var circle = new Circle(12, c);
+        circle.setStroke(InterfaceColors.Crust);
+        circle.setStrokeWidth(2);
         btn.setBackground(new Background(new BackgroundFill(c, null, null)));
-        btn.setShape(new Circle(12));
-        return btn;
+        return circle;
     }
 
 }

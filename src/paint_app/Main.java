@@ -2,6 +2,7 @@ package paint_app;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
@@ -9,8 +10,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import paint_app.components.Tools;
-
-import java.util.logging.Logger;
 
 /* TODO
  * toolbox
@@ -45,16 +44,24 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        final Logger logger = Logger.getLogger("Paint App");
         AppState AppState = paint_app.AppState.getInstance();
-        AppState.attachLogger(logger);
+        AppState.setup();
+
 
         var root = new VBox();
-//        root.getStylesheets().add("style.css");
-//        root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
-//        root.setMinSize(Globals.WIDTH, Globals.HEIGHT);
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
         var scene = new Scene(root, WIDTH, HEIGHT);
+        scene.setOnKeyPressed(e -> {
+            AppState.logger.info(e.toString());
+
+            if (e.getCode() == KeyCode.X) {
+                var tmp = AppState.primaryColorProperty().get();
+                AppState.primaryColorProperty().set(AppState.secondaryColorProperty().get());
+                AppState.secondaryColorProperty().set(tmp);
+            } else {
+                //
+            }
+        });
 
         Rectangle top_panel = new Rectangle();
         top_panel.widthProperty().bind(root.widthProperty());
@@ -66,34 +73,9 @@ public class Main extends Application {
         bottom_panel.heightProperty().bind(root.heightProperty().multiply(0.75));
         bottom_panel.setFill(Color.LIGHTGREEN);
 
-        // Add the panels to the VBox
-//        root.getChildren().addAll(top_panel, bottom_panel);
 
         root.getChildren().addAll(new Tools());
 
-//        var top_panel = new Tools();
-//        top_panel.minWidthProperty().bind(root.widthProperty());
-//        top_panel.maxWidthProperty().bind(root.widthProperty());
-//
-//        var bottom_panel = new HBox();
-//        bottom_panel.setSpacing(10);
-//        bottom_panel.minWidthProperty().bind(root.widthProperty());
-//        bottom_panel.maxWidthProperty().bind(root.widthProperty());
-//        bottom_panel.minHeightProperty().bind(root.heightProperty());
-//        bottom_panel.maxHeightProperty().bind(root.heightProperty());
-//
-//        var workspace = new Workspace();
-//        workspace.minWidthProperty().bind(bottom_panel.widthProperty().subtract(210));
-//        workspace.minHeightProperty().bind(bottom_panel.heightProperty());
-//
-//        var dock = makePlaceholder(200, 100, Color.PALEGREEN);
-//        dock.minWidth(200);
-//        dock.maxWidth(200);
-//        dock.heightProperty().bind(bottom_panel.heightProperty());
-//
-//        root.getChildren().addAll(top_panel, bottom_panel);
-//        bottom_panel.getChildren().addAll(workspace, dock);
-//
 
         stage.setScene(scene);
         stage.setTitle("Paint App");
