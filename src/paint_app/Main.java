@@ -10,22 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import paint_app.components.Sidebar;
-import paint_app.components.Tools;
+import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
 
-/* TODO
- * toolbox
- * - brushes
- * - color picker logic
- * layer implementation
- * consult the drawing for other UI aspects to do
- * everything else
- * put everything in boxes so it just pads out as the window grows
- *
- * maybe:
- * - button to move current layer up/down
- *
- */
 
 /* References
  * css https://openjfx.io/javadoc/18/javafx.graphics/javafx/scene/doc-files/cssref.html
@@ -67,7 +54,7 @@ public class Main extends Application {
         scene.setOnKeyPressed(Main::handleKeyEvents);
 
         final var left_box = new VBox();
-        final var tools = new Tools();
+        final var tools = new Toolbar();
         final var workspace = new Workspace();
         final var sidebar = new Sidebar();
         sidebar.setMinHeight(HEIGHT);
@@ -75,6 +62,11 @@ public class Main extends Application {
         left_box.getChildren().addAll(tools, workspace);
         left_box.setMinWidth(WIDTH - 300);
         root.getChildren().addAll(left_box, sidebar);
+
+
+//        System.out.println(icons.size());
+
+//        System.exit(0);
 
 
         stage.setScene(scene);

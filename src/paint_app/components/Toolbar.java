@@ -1,5 +1,6 @@
 package paint_app.components;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -7,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -14,9 +17,17 @@ import javafx.scene.shape.Circle;
 import paint_app.AppState;
 import paint_app.InterfaceColors;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-public class Tools extends HBox {
+public class Toolbar extends GridPane {
     static final Color[] COLORS = {
             Color.web("#000000"), Color.web("#FFFFFF"),
             Color.web("#696969"), Color.web("#c0c0c0"),
@@ -37,23 +48,42 @@ public class Tools extends HBox {
     };
     static final AppState AppState = paint_app.AppState.getInstance();
 
-    public Tools() {
+    public Toolbar() {
         setBackground(new Background(new BackgroundFill(InterfaceColors.Surface0, null, null)));
         setBorder(new Border(new BorderStroke(InterfaceColors.Mantle, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
+        setAlignment(Pos.CENTER);
+        setPadding(new Insets(5, 20, 5, 20));
+
+        var brush_label = new Label("tools");
+        brush_label.setTextFill(InterfaceColors.Text);
+        brush_label.setStyle("-fx-font-size: 14px; -fx-font-style: bold; -fx-padding: 4px");
+        brush_label.setAlignment(Pos.CENTER);
+
+        var colors_label = new Label("color picker");
+        colors_label.setTextFill(brush_label.getTextFill());
+        colors_label.setStyle(brush_label.getStyle());
+        colors_label.setAlignment(brush_label.getAlignment());
 
         final var brushes = createBrushInterface();
+        brushes.paddingProperty().bind(this.paddingProperty());
+        brushes.alignmentProperty().bind(this.alignmentProperty());
+
         final var colors = createColorsInterface();
+        colors.paddingProperty().bind(this.paddingProperty());
+        colors.alignmentProperty().bind(this.alignmentProperty());
 
-        getChildren().addAll(brushes, colors);
+        final var sep_1 = new Separator(Orientation.VERTICAL);
+        final var sep_2 = new Separator(Orientation.VERTICAL);
 
-        // TODO: refactor
-        for (int i = getChildren().size() - 1; i > 0; i--) {
-            var sep = new Separator(Orientation.VERTICAL);
-            getChildren().add(i, sep);
+        addRow(0, brushes, sep_1, colors);
+        addRow(1, brush_label, sep_2, colors_label);
+
+        for (var i : getChildren()) {
+            GridPane.setHalignment(i, HPos.CENTER);
         }
     }
 
-    private static VBox createNodeGrid(String label_text, int size, Function<Integer, Node> generator) {
+    private static VBox createNodeGrid(int size, Function<Integer, Node> generator) {
         var box = new VBox();
         box.setAlignment(Pos.CENTER);
 
@@ -71,19 +101,38 @@ public class Tools extends HBox {
             }
         }
 
-        var text = new Label(label_text);
-        text.setTextFill(InterfaceColors.Text);
-        text.setStyle("-fx-font-size: 16px; -fx-font-style: italic;");
-        text.setPadding(new Insets(5));
 
-        box.getChildren().addAll(grid, text);
+        box.getChildren().addAll(grid);
         return box;
     }
 
-    private static HBox createBrushInterface() {
-        // TODO
-        var brushes = new HBox();
-        return brushes;
+    private static VBox createBrushInterface() {
+        final List<ImageView> icons;
+        try {
+            var dir = Paths.get(Objects.requireNonNull(Toolbar.class.getResource("/icons/")).toURI());
+
+            // walk through "/assets/icons/" and generate List<ImageView>
+            try (Stream<Path> paths = Files.walk(dir)) {
+                icons = paths
+                        .filter(Files::isRegularFile)
+                        .sorted()
+                        .filter(e -> e.toString().endsWith(".png"))
+                        .map(e -> {
+                            final var img_path = Toolbar.class.getResource("/icons/" + dir.relativize(e));
+                            final var img = new Image("" + img_path);
+                            final var view = new ImageView(img);
+                            view.setFitHeight(30);
+                            view.setFitWidth(30);
+                            return view;
+                        })
+                        .toList();
+            }
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // pass list to grid generator
+        return createNodeGrid(icons.size(), icons::get);
     }
 
     private static HBox createColorsInterface() {
@@ -100,7 +149,7 @@ public class Tools extends HBox {
 
         color_pair.getChildren().addAll(primary_color, secondary_color);
 
-        final var color_selector = createNodeGrid("color picker", COLORS.length, i -> {
+        final var color_selector = createNodeGrid(COLORS.length, i -> {
             var btn = createColorButton(COLORS[i]);
             btn.setOnMouseClicked(e -> {
                 switch (e.getButton()) {
