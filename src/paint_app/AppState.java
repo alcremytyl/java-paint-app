@@ -1,8 +1,10 @@
 package paint_app;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
+import paint_app.components.layer.Layer;
 
 import java.util.logging.Logger;
 
@@ -12,10 +14,11 @@ public class AppState {
     private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
     private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
     private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
+    private final SimpleListProperty<Layer> layers = new SimpleListProperty<>();
 
     private AppState() {
+//        layers.get().add(new Layer("Untitled"));
     }
-
 
     public static synchronized AppState getInstance() {
         if (INSTANCE == null) {
@@ -44,6 +47,10 @@ public class AppState {
 
     public SimpleDoubleProperty brushSizeProperty() {
         return this.brush_size;
+    }
+
+    public SimpleListProperty<Layer> layersProperty() {
+        return this.layers;
     }
 
     public void resetColors() {

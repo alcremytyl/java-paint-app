@@ -40,9 +40,13 @@ public class Tools extends HBox {
     public Tools() {
         setBackground(new Background(new BackgroundFill(InterfaceColors.Surface0, null, null)));
         setBorder(new Border(new BorderStroke(InterfaceColors.Mantle, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
-        addColorInterface(this);
-        
 
+        final var brushes = createBrushInterface();
+        final var colors = createColorsInterface();
+
+        getChildren().addAll(brushes, colors);
+
+        // TODO: refactor
         for (int i = getChildren().size() - 1; i > 0; i--) {
             var sep = new Separator(Orientation.VERTICAL);
             getChildren().add(i, sep);
@@ -76,7 +80,13 @@ public class Tools extends HBox {
         return box;
     }
 
-    private static void addColorInterface(Pane n) {
+    private static HBox createBrushInterface() {
+        // TODO
+        var brushes = new HBox();
+        return brushes;
+    }
+
+    private static HBox createColorsInterface() {
         final var colors = new HBox();
         colors.setSpacing(10);
 
@@ -110,7 +120,7 @@ public class Tools extends HBox {
         sep.setMaxHeight(60);
 
         colors.getChildren().addAll(color_pair, sep, color_selector);
-        n.getChildren().add(colors);
+        return colors;
     }
 
     private static Circle createColorButton(Color c) {
