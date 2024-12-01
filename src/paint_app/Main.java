@@ -3,6 +3,7 @@ package paint_app;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
@@ -36,32 +37,31 @@ import paint_app.components.Tools;
 public class Main extends Application {
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 800;
+    private static final AppState AppState = paint_app.AppState.getInstance();
 
 
     public static void main(String[] args) {
         launch(args);
     }
 
+    private static void handleKeyEvents(KeyEvent e) {
+        switch (e.getCode()) {
+            case KeyCode.X:
+                AppState.swapColors();
+                break;
+            case KeyCode.D:
+                AppState.resetColors();
+                break;
+        }
+    }
+
     @Override
     public void start(Stage stage) {
-        AppState AppState = paint_app.AppState.getInstance();
-        AppState.setup();
-
-
         var root = new VBox();
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
-        var scene = new Scene(root, WIDTH, HEIGHT);
-        scene.setOnKeyPressed(e -> {
-            AppState.logger.info(e.toString());
 
-            if (e.getCode() == KeyCode.X) {
-                var tmp = AppState.primaryColorProperty().get();
-                AppState.primaryColorProperty().set(AppState.secondaryColorProperty().get());
-                AppState.secondaryColorProperty().set(tmp);
-            } else {
-                //
-            }
-        });
+        var scene = new Scene(root, WIDTH, HEIGHT);
+        scene.setOnKeyPressed(Main::handleKeyEvents);
 
         Rectangle top_panel = new Rectangle();
         top_panel.widthProperty().bind(root.widthProperty());
@@ -73,8 +73,9 @@ public class Main extends Application {
         bottom_panel.heightProperty().bind(root.heightProperty().multiply(0.75));
         bottom_panel.setFill(Color.LIGHTGREEN);
 
+        final var tools = new Tools();
 
-        root.getChildren().addAll(new Tools());
+        root.getChildren().addAll(tools);
 
 
         stage.setScene(scene);
