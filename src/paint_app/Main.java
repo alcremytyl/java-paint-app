@@ -1,7 +1,10 @@
 package paint_app;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -46,6 +49,24 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
 
+        // TODO: use this to make sidebar and workspace sync up
+        {
+            var a = new HBox();
+            SimpleListProperty<Node> ls = new SimpleListProperty<>(a.getChildren());
+
+            ls.addListener((ListChangeListener<? super Node>) change -> {
+                while (change.next()) {
+                    if (change.wasAdded()) {
+                        System.out.println("Added: " + change.getAddedSubList());
+                    }
+                    if (change.wasRemoved()) {
+                        System.out.println("Removed: " + change.getRemoved());
+                    }
+                }
+            });
+        }
+
+        System.exit(0);
         var root = new HBox();
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 
@@ -68,7 +89,6 @@ public class Main extends Application {
 
             System.out.println(spacer.getHeight());
         });
-//        VBox.setVgrow(spacer, Priority.ALWAYS);  // Allow the spacer to take up all available space
         sidebar.setMinHeight(HEIGHT);
 
         left_box.getChildren().addAll(tools, spacer, workspace);

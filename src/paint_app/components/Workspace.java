@@ -6,8 +6,11 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import paint_app.AppState;
 
 public class Workspace extends StackPane {
+    private static final AppState AppState = paint_app.AppState.getInstance();
+
     public Workspace() {
         setMinSize(800, 600);
         setMaxSize(800, 600);
@@ -15,6 +18,9 @@ public class Workspace extends StackPane {
         setPadding(new Insets(100));
 
         this.setAlignment(Pos.BOTTOM_CENTER);
+
+        AppState.layersProperty().addListener((a, b, c) -> {
+        });
     }
 
 }
