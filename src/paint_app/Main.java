@@ -1,13 +1,11 @@
 package paint_app;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
@@ -58,16 +56,25 @@ public class Main extends Application {
         final var tools = new Toolbar();
         final var workspace = new Workspace();
         final var sidebar = new Sidebar();
+        final var spacer = new Region();
+
+        spacer.prefHeightProperty()
+                .bind(left_box.heightProperty()
+                        .subtract(workspace.heightProperty())
+                        .subtract(tools.heightProperty())
+                        .divide(2));
+
+        stage.setOnShown(e -> {
+
+            System.out.println(spacer.getHeight());
+        });
+//        VBox.setVgrow(spacer, Priority.ALWAYS);  // Allow the spacer to take up all available space
         sidebar.setMinHeight(HEIGHT);
 
-        left_box.getChildren().addAll(tools, workspace);
+        left_box.getChildren().addAll(tools, spacer, workspace);
         left_box.setMinWidth(WIDTH - 300);
+        left_box.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(left_box, sidebar);
-
-
-//        System.out.println(icons.size());
-
-//        System.exit(0);
 
 
         stage.setScene(scene);

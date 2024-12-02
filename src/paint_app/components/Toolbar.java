@@ -39,6 +39,7 @@ public class Toolbar extends GridPane {
     static final AppState AppState = paint_app.AppState.getInstance();
 
     public Toolbar() {
+        setMaxHeight(100);
         setBackground(new Background(new BackgroundFill(InterfaceColors.Surface0, null, null)));
         setBorder(new Border(new BorderStroke(InterfaceColors.Mantle, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
         setAlignment(Pos.CENTER);
