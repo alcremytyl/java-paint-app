@@ -47,6 +47,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+
         var root = new HBox();
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 

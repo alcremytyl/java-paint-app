@@ -10,6 +10,5 @@ module paint.app {
     requires java.logging;
 
     exports paint_app;
-    exports paint_app.components.layer;
     exports paint_app.components;
 }

@@ -29,3 +29,4 @@ public class Sidebar extends VBox {
         getChildren().addAll(hist_label, history, sep, layers_label, layers);
     }
 }
+

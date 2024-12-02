@@ -8,8 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -17,15 +15,7 @@ import javafx.scene.shape.Circle;
 import paint_app.AppState;
 import paint_app.InterfaceColors;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 public class Toolbar extends GridPane {
     static final Color[] COLORS = {
@@ -56,7 +46,7 @@ public class Toolbar extends GridPane {
 
         var brush_label = new Label("tools");
         brush_label.setTextFill(InterfaceColors.Text);
-        brush_label.setStyle("-fx-font-size: 14px; -fx-font-style: bold; -fx-padding: 4px");
+        brush_label.setStyle("-fx-font-size: 14px; -fx-padding: 4px");
         brush_label.setAlignment(Pos.CENTER);
 
         var colors_label = new Label("color picker");
@@ -107,31 +97,7 @@ public class Toolbar extends GridPane {
     }
 
     private static VBox createBrushInterface() {
-        final List<ImageView> icons;
-        try {
-            var dir = Paths.get(Objects.requireNonNull(Toolbar.class.getResource("/icons/")).toURI());
-
-            // walk through "/assets/icons/" and generate List<ImageView>
-            try (Stream<Path> paths = Files.walk(dir)) {
-                icons = paths
-                        .filter(Files::isRegularFile)
-                        .sorted()
-                        .filter(e -> e.toString().endsWith(".png"))
-                        .map(e -> {
-                            final var img_path = Toolbar.class.getResource("/icons/" + dir.relativize(e));
-                            final var img = new Image("" + img_path);
-                            final var view = new ImageView(img);
-                            view.setFitHeight(30);
-                            view.setFitWidth(30);
-                            return view;
-                        })
-                        .toList();
-            }
-        } catch (URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // pass list to grid generator
+        final var icons = Tool.getImageViews();
         return createNodeGrid(icons.size(), icons::get);
     }
 
