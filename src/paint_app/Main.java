@@ -1,15 +1,14 @@
 package paint_app;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import paint_app.components.Layer;
 import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
@@ -43,35 +42,23 @@ public class Main extends Application {
             case KeyCode.D:
                 AppState.resetColors();
                 break;
+
+            // TODO: delete when done
+            case KeyCode.A:
+                System.out.println(AppState.layersProperty());
+                AppState.layersProperty().add(new Layer(""));
+                break;
         }
     }
 
     @Override
     public void start(Stage stage) {
-
-        // TODO: use this to make sidebar and workspace sync up
-        {
-            var a = new HBox();
-            SimpleListProperty<Node> ls = new SimpleListProperty<>(a.getChildren());
-
-            ls.addListener((ListChangeListener<? super Node>) change -> {
-                while (change.next()) {
-                    if (change.wasAdded()) {
-                        System.out.println("Added: " + change.getAddedSubList());
-                    }
-                    if (change.wasRemoved()) {
-                        System.out.println("Removed: " + change.getRemoved());
-                    }
-                }
-            });
-        }
-
-        System.exit(0);
         var root = new HBox();
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 
         var scene = new Scene(root, WIDTH, HEIGHT);
         scene.setOnKeyPressed(Main::handleKeyEvents);
+
 
         final var left_box = new VBox();
         final var tools = new Toolbar();
@@ -85,22 +72,41 @@ public class Main extends Application {
                         .subtract(tools.heightProperty())
                         .divide(2));
 
-        stage.setOnShown(e -> {
-
-            System.out.println(spacer.getHeight());
-        });
         sidebar.setMinHeight(HEIGHT);
 
-        left_box.getChildren().addAll(tools, spacer, workspace);
+//        left_box.getChildren().addAll(tools, spacer, workspace);
         left_box.setMinWidth(WIDTH - 300);
         left_box.setAlignment(Pos.TOP_CENTER);
-        root.getChildren().addAll(left_box, sidebar);
+//        root.getChildren().addAll(left_box, sidebar);
 
+        var l1 = new Layer("aa");
+        var l2 = new Layer("bb");
 
+        l1.useGraphicsContext(gc -> {
+            gc.setFill(Color.BLACK);
+            gc.fillOval(200, 200, 200, 100);
+        });
+
+        l2.useGraphicsContext(gc -> {
+            gc.setFill(Color.RED);
+            gc.fillOval(250, 250, 100, 100);
+        });
+
+        var vbox = new VBox();
+        vbox.setSpacing(20);
+
+        var pa = new StackPane();
+        pa.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        pa.getChildren().addAll(l1, l2);
+
+        vbox.getChildren().addAll(pa, l1.asSidebarInteractive(), l2.asSidebarInteractive());
+        root.getChildren().addAll(vbox);
         stage.setScene(scene);
         stage.setTitle("Paint App");
         stage.sizeToScene();
         stage.setResizable(false);
         stage.show();
+
+
     }
 }

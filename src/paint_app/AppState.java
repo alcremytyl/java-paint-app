@@ -3,6 +3,7 @@ package paint_app;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.scene.paint.Color;
 import paint_app.components.Layer;
 import paint_app.components.Tool;
@@ -20,7 +21,7 @@ public class AppState {
     private final SimpleObjectProperty<Tool> current_tool = new SimpleObjectProperty<>(Tool.BRUSH);
     private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
 
-    private final SimpleListProperty<Layer> layers = new SimpleListProperty<>();
+    private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
 
 
     private AppState() {
