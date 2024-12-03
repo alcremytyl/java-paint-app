@@ -9,26 +9,17 @@ import javafx.scene.paint.Color;
 import paint_app.AppState;
 
 public class Workspace extends StackPane {
+    private static final int CANVAS_WIDTH = 800;
+    private static final int CANVAS_HEIGHT = 600;
+
     private static final AppState AppState = paint_app.AppState.getInstance();
 
     public Workspace() {
-        setMinSize(800, 600);
-        setMaxSize(800, 600);
+        setMinSize(CANVAS_WIDTH, CANVAS_HEIGHT);
+        setMaxSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         setPadding(new Insets(100));
-
-        this.setAlignment(Pos.BOTTOM_CENTER);
-
-//        AppState.layersProperty().addListener((ListChangeListener<? super Node>) change -> {
-//            while (change.next()) {
-//                if (change.wasAdded()) {
-//                    this.getChildren().addAll(change.getAddedSubList());
-//                } else if (change.wasRemoved()) {
-//                    this.getChildren().removeAll(change.getRemoved());
-//                }
-//            }
-//        });
-
+        setAlignment(Pos.BOTTOM_CENTER);
         getChildren().setAll(AppState.layersProperty());
 
     }

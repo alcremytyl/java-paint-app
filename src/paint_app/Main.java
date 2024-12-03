@@ -19,7 +19,7 @@ import java.util.Random;
 
 
 /* References
- * css https://openjfx.io/javadoc/18/javafx.graphics/javafx/scene/doc-files/cssref.html
+ * css https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html
  * docs https://fxdocs.github.io/docs/html5/
  * API https://openjfx.io/javadoc/23/
  * colors https://catppuccin.com/palette#Macchiato
@@ -110,9 +110,7 @@ public class Main extends Application {
         AppState.attachListeners(workspace, sidebar);
 
         var a = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            System.out.println(workspace.getChildren().size());
-            System.out.println(sidebar.getLayers().getChildren().size());
-            System.out.println();
+            // some debug log here
         }));
         a.setCycleCount(-1);
         a.play();

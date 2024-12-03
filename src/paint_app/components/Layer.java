@@ -29,15 +29,6 @@ public class Layer extends Canvas {
         updatePreview();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Layer setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     public HBox asSidebarInteractive() {
         final var box = new HBox();
         box.setPrefSize(250, 30);

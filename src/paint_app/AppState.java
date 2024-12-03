@@ -14,6 +14,7 @@ import paint_app.components.Tool;
 import paint_app.components.Workspace;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -29,10 +30,10 @@ public class AppState {
     private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
 
     private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
 
 
     private AppState() {
-//        layers.add(new Layer("Untitled"));
     }
 
     public static synchronized AppState getInstance() {
@@ -44,12 +45,12 @@ public class AppState {
     }
 
     private void setupListeners() {
-        primary_color.addListener((_, o, n) -> {
-            logger.info(String.format("set `primary_color` from %s to %s", o, n));
-        });
-        secondary_color.addListener((_, o, n) -> {
-            logger.info(String.format("set `secondary_color` from %s to %s", o, n));
-        });
+//        primary_color.addListener((_, o, n) -> {
+//            logger.info(String.format("set `primary_color` from %s to %s", o, n));
+//        });
+//        secondary_color.addListener((_, o, n) -> {
+//            logger.info(String.format("set `secondary_color` from %s to %s", o, n));
+//        });
     }
 
     public SimpleObjectProperty<Color> primaryColorProperty() {
@@ -72,6 +73,10 @@ public class AppState {
         return this.layers;
     }
 
+    public SimpleObjectProperty<Layer> currentLayerProperty() {
+        return this.current_layer;
+    }
+
     public void resetColors() {
         logger.info("Resetting colors");
         primary_color.set(Color.BLACK);
@@ -80,19 +85,23 @@ public class AppState {
 
     public void swapColors() {
         logger.info("Swapping colors");
+
         final var tmp = primary_color.get();
         primary_color.set(secondary_color.get());
         secondary_color.set(tmp);
     }
 
+    // TODO: current layer attach and unattach mouse listeners for tool
     public void attachListeners(Workspace w, Sidebar s) {
+        // references for equality checking
         Map<Layer, HBox> layer_pairs = new HashMap<>();
 
-        this.layersProperty().addListener((ListChangeListener<? super Node>) change -> {
+        // sync workspace and sidebar to `layers`
+        this.layers.addListener((ListChangeListener<? super Node>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
                     final var canvases = change.getAddedSubList();
-                    final var previews = canvases.stream()
+                    final List<HBox> previews = canvases.stream()
                             .filter(Layer.class::isInstance)
                             .map(Layer.class::cast)
                             .map(layer -> {
@@ -101,6 +110,9 @@ public class AppState {
                                 return preview;
                             })
                             .toList();
+
+                    current_layer.set((Layer) canvases.getFirst());
+                    System.out.println("current layer " + current_layer.get());
 
                     w.getChildren().addAll(canvases);
                     s.getLayers().getChildren().addAll(previews);
@@ -113,16 +125,35 @@ public class AppState {
                             .map(layer_pairs::get)
                             .toList();
 
+                    // TODO: current layer when removed
+                    // current_layer logic here
+
+                    if (canvases.contains(current_layer.get())) {
+                        int cur_idx = layers.indexOf(current_layer.get());
+                        int new_idx = cur_idx > 0 ? cur_idx - 1 : 0;
+
+                        // causes out of bounds when layers length is 1
+                        current_layer.set(layers.get(new_idx));
+                        System.out.println("current " + current_layer.get());
+                    }
+
                     w.getChildren().removeAll(canvases);
-                    // does not work
                     s.getLayers().getChildren().removeAll(previews);
 
                     canvases.stream()
                             .filter(Layer.class::isInstance)
                             .map(Layer.class::cast)
                             .forEach(layer_pairs::remove);
+
+                    // or here
+
                 }
             }
         });
+
+        this.current_layer.addListener((observable, o, n) -> {
+        });
+
+
     }
 }
