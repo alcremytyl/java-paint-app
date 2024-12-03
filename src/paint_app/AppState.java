@@ -4,10 +4,17 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Node;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import paint_app.components.Layer;
+import paint_app.components.Sidebar;
 import paint_app.components.Tool;
+import paint_app.components.Workspace;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class AppState {
@@ -25,7 +32,7 @@ public class AppState {
 
 
     private AppState() {
-//        layers.get().add(new Layer("Untitled"));
+//        layers.add(new Layer("Untitled"));
     }
 
     public static synchronized AppState getInstance() {
@@ -76,5 +83,46 @@ public class AppState {
         final var tmp = primary_color.get();
         primary_color.set(secondary_color.get());
         secondary_color.set(tmp);
+    }
+
+    public void attachListeners(Workspace w, Sidebar s) {
+        Map<Layer, HBox> layer_pairs = new HashMap<>();
+
+        this.layersProperty().addListener((ListChangeListener<? super Node>) change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    final var canvases = change.getAddedSubList();
+                    final var previews = canvases.stream()
+                            .filter(Layer.class::isInstance)
+                            .map(Layer.class::cast)
+                            .map(layer -> {
+                                final var preview = layer.asSidebarInteractive();
+                                layer_pairs.put(layer, preview);
+                                return preview;
+                            })
+                            .toList();
+
+                    w.getChildren().addAll(canvases);
+                    s.getLayers().getChildren().addAll(previews);
+
+                } else if (change.wasRemoved()) {
+                    final var canvases = change.getRemoved();
+                    final var previews = canvases.stream()
+                            .filter(Layer.class::isInstance)
+                            .map(Layer.class::cast)
+                            .map(layer_pairs::get)
+                            .toList();
+
+                    w.getChildren().removeAll(canvases);
+                    // does not work
+                    s.getLayers().getChildren().removeAll(previews);
+
+                    canvases.stream()
+                            .filter(Layer.class::isInstance)
+                            .map(Layer.class::cast)
+                            .forEach(layer_pairs::remove);
+                }
+            }
+        });
     }
 }

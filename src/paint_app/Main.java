@@ -1,17 +1,21 @@
 package paint_app;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import paint_app.components.Layer;
 import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
+
+import java.util.Random;
 
 
 /* References
@@ -45,14 +49,32 @@ public class Main extends Application {
 
             // TODO: delete when done
             case KeyCode.A:
+                final var aa = new Layer("A" + AppState.layersProperty().size());
+                final var r = new Random();
+                aa.useGraphicsContext(gc -> {
+                    gc.setFill(AppState.primaryColorProperty().get());
+                    gc.fillOval(
+                            Math.abs(r.nextInt() % 500),
+                            Math.abs(r.nextInt() % 500),
+                            Math.abs(r.nextInt() % 500),
+                            Math.abs(r.nextInt() % 500)
+                    );
+                });
+                AppState.layersProperty().add(aa);
                 System.out.println(AppState.layersProperty());
-                AppState.layersProperty().add(new Layer(""));
+                break;
+
+            case KeyCode.B:
+                AppState.layersProperty().removeLast();
+                System.out.println(AppState.layersProperty());
                 break;
         }
     }
 
     @Override
     public void start(Stage stage) {
+
+
         var root = new HBox();
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 
@@ -74,39 +96,26 @@ public class Main extends Application {
 
         sidebar.setMinHeight(HEIGHT);
 
-//        left_box.getChildren().addAll(tools, spacer, workspace);
+        left_box.getChildren().addAll(tools, spacer, workspace);
         left_box.setMinWidth(WIDTH - 300);
         left_box.setAlignment(Pos.TOP_CENTER);
-//        root.getChildren().addAll(left_box, sidebar);
+        root.getChildren().addAll(left_box, sidebar);
 
-        var l1 = new Layer("aa");
-        var l2 = new Layer("bb");
-
-        l1.useGraphicsContext(gc -> {
-            gc.setFill(Color.BLACK);
-            gc.fillOval(200, 200, 200, 100);
-        });
-
-        l2.useGraphicsContext(gc -> {
-            gc.setFill(Color.RED);
-            gc.fillOval(250, 250, 100, 100);
-        });
-
-        var vbox = new VBox();
-        vbox.setSpacing(20);
-
-        var pa = new StackPane();
-        pa.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-        pa.getChildren().addAll(l1, l2);
-
-        vbox.getChildren().addAll(pa, l1.asSidebarInteractive(), l2.asSidebarInteractive());
-        root.getChildren().addAll(vbox);
         stage.setScene(scene);
         stage.setTitle("Paint App");
         stage.sizeToScene();
         stage.setResizable(false);
         stage.show();
 
+        AppState.attachListeners(workspace, sidebar);
+
+        var a = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            System.out.println(workspace.getChildren().size());
+            System.out.println(sidebar.getLayers().getChildren().size());
+            System.out.println();
+        }));
+        a.setCycleCount(-1);
+        a.play();
 
     }
 }

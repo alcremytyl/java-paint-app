@@ -1,9 +1,7 @@
 package paint_app.components;
 
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
@@ -21,23 +19,17 @@ public class Workspace extends StackPane {
 
         this.setAlignment(Pos.BOTTOM_CENTER);
 
-        AppState.layersProperty().addListener((ListChangeListener<? super Node>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    System.out.println("Added: " + change.getAddedSubList());
-                }
-                if (change.wasRemoved()) {
-                    System.out.println("Removed: " + change.getRemoved());
-                }
-            }
-        });
+//        AppState.layersProperty().addListener((ListChangeListener<? super Node>) change -> {
+//            while (change.next()) {
+//                if (change.wasAdded()) {
+//                    this.getChildren().addAll(change.getAddedSubList());
+//                } else if (change.wasRemoved()) {
+//                    this.getChildren().removeAll(change.getRemoved());
+//                }
+//            }
+//        });
 
         getChildren().setAll(AppState.layersProperty());
 
-/*
-        AppState.layersProperty().addListener((a, b, c) -> {
-        });
-*/
     }
-
 }
