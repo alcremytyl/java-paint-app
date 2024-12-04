@@ -3,6 +3,7 @@ package paint_app.components;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import paint_app.AppState;
 
 import java.util.Arrays;
@@ -12,21 +13,24 @@ import java.util.Objects;
 public enum Tool {
 
     // TODO: tool events
-    BRUSH(gc -> {
+    BRUSH((e, gc) -> {
+        final var color;
+
+        gc.setStroke(AppState.pr);
     }),
-    SPRAY(gc -> {
+    SPRAY((e, gc) -> {
     }),
-    CIRCLE(gc -> {
+    CIRCLE((e, gc) -> {
     }),
-    RECTANGLE(gc -> {
+    RECTANGLE((e, gc) -> {
     }),
-    DROPPER(gc -> {
+    DROPPER((e, gc) -> {
     }),
-    TEXT(gc -> {
+    TEXT((e, gc) -> {
     }),
-    SELECT(gc -> {
+    SELECT((e, gc) -> {
     }),
-    ERASER(gc -> {
+    ERASER((e, gc) -> {
     });
 
     static AppState AppState = paint_app.AppState.getInstance();
@@ -42,7 +46,7 @@ public enum Tool {
         this.image.setFitWidth(30);
         this.image.setFitHeight(30);
 
-
+        // trying to do mouseevent in layer
     }
 
     public static List<ImageView> getImageViews() {
@@ -61,6 +65,6 @@ public enum Tool {
 
     @FunctionalInterface
     public interface ToolAction {
-        void handle(GraphicsContext gc);
+        void handle(MouseEvent e, GraphicsContext gc);
     }
 }

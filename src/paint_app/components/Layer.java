@@ -1,11 +1,12 @@
 package paint_app.components;
 
+import javafx.event.EventHandler;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -19,6 +20,8 @@ public class Layer extends Canvas {
     AppState AppState = paint_app.AppState.getInstance();
     String name;
     CheckBox visible_checkbox;
+
+    EventHandler<MouseEvent> handler;
 
     public Layer(String name) {
         super(800, 600);
@@ -51,10 +54,10 @@ public class Layer extends Canvas {
         return this.sidebar_content;
     }
 
-    public void useGraphicsContext(GraphicsContextUser gc) {
-        gc.use(getGraphicsContext2D());
-        this.updatePreview();
-    }
+//    public void useGraphicsContext(GraphicsContextUser gc) {
+//        gc.use(getGraphicsContext2D());
+//        this.updatePreview();
+//    }
 
     private void updatePreview() {
         final var snap = new SnapshotParameters();
@@ -63,18 +66,27 @@ public class Layer extends Canvas {
         preview.setImage(shot);
     }
 
-    public void toHighlight() {
+    public void toSelected() {
+
+        final EventHandler<MouseEvent> handler = e -> {
+            AppState.currentToolProperty().get().getEvent().handle(e, getGraphicsContext2D());
+            updatePreview();
+        };
+
         sidebar_content.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-// TODO: urgent, focus on getting this to work Mr. GPT
-//        addEventFilter(MouseEvent.MOUSE_PRESSED, );
 
+
+        addEventFilter(MouseEvent.MOUSE_CLICKED, handler);
+        addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
     }
 
-    public void unHighlight() {
+    public void unSelect() {
         sidebar_content.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+        // TODO: removal
+//        removeEventFilter(MouseEvent.MOUSE_CLICKED, );
     }
 
-    public interface GraphicsContextUser {
-        void use(GraphicsContext gc);
-    }
+//    public interface GraphicsContextUser {
+//        void use(GraphicsContext gc);
+//    }
 }

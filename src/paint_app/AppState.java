@@ -39,18 +39,8 @@ public class AppState {
     public static synchronized AppState getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new AppState();
-            INSTANCE.setupListeners();
         }
         return INSTANCE;
-    }
-
-    private void setupListeners() {
-//        primary_color.addListener((_, o, n) -> {
-//            logger.info(String.format("set `primary_color` from %s to %s", o, n));
-//        });
-//        secondary_color.addListener((_, o, n) -> {
-//            logger.info(String.format("set `secondary_color` from %s to %s", o, n));
-//        });
     }
 
     public SimpleObjectProperty<Color> primaryColorProperty() {
@@ -139,11 +129,12 @@ public class AppState {
             }
         });
 
+        // change background for sidebar version and attach/remove tool listeners
         this.current_layer.addListener((observable, o, n) -> {
             if (o != null)
-                o.unHighlight();
+                o.unSelect();
             if (n != null)
-                n.toHighlight();
+                n.toSelected();
         });
     }
 }
