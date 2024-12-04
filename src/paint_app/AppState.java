@@ -105,14 +105,13 @@ public class AppState {
                             .filter(Layer.class::isInstance)
                             .map(Layer.class::cast)
                             .map(layer -> {
-                                final var preview = layer.asSidebarInteractive();
+                                final var preview = layer.getSidebarContent();
                                 layer_pairs.put(layer, preview);
                                 return preview;
                             })
                             .toList();
 
                     current_layer.set((Layer) canvases.getFirst());
-                    System.out.println("current layer " + current_layer.get());
 
                     w.getChildren().addAll(canvases);
                     s.getLayers().getChildren().addAll(previews);
@@ -125,17 +124,9 @@ public class AppState {
                             .map(layer_pairs::get)
                             .toList();
 
-                    // TODO: current layer when removed
-                    // current_layer logic here
 
-                    if (canvases.contains(current_layer.get())) {
-                        int cur_idx = layers.indexOf(current_layer.get());
-                        int new_idx = cur_idx > 0 ? cur_idx - 1 : 0;
-
-                        // causes out of bounds when layers length is 1
-                        current_layer.set(layers.get(new_idx));
-                        System.out.println("current " + current_layer.get());
-                    }
+                    final var next_layer = !layers.isEmpty() ? layers.getLast() : null;
+                    current_layer.set(next_layer);
 
                     w.getChildren().removeAll(canvases);
                     s.getLayers().getChildren().removeAll(previews);
@@ -144,16 +135,15 @@ public class AppState {
                             .filter(Layer.class::isInstance)
                             .map(Layer.class::cast)
                             .forEach(layer_pairs::remove);
-
-                    // or here
-
                 }
             }
         });
 
         this.current_layer.addListener((observable, o, n) -> {
+            if (o != null)
+                o.unHighlight();
+            if (n != null)
+                n.toHighlight();
         });
-
-
     }
 }
