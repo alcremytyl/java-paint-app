@@ -16,6 +16,9 @@ import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
 
 
+// TODO: make helper function for icon getting
+
+
 /* References
  * css https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html
  * docs https://fxdocs.github.io/docs/html5/
@@ -61,8 +64,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-
-
         var root = new HBox();
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 

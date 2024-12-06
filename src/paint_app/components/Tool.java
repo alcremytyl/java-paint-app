@@ -5,6 +5,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import paint_app.AppState;
 
 import java.util.Arrays;
@@ -27,9 +29,20 @@ public enum Tool {
 
         double size = state.brushSizeProperty().get();
 
-        gc.setFill(color);
-        gc.fillOval(e.getX(), e.getY(), size, size);
+        // Set line width and smooth out the line using rounded ends and joins
+        gc.setStroke(color);
+        gc.setLineWidth(size);
+        gc.setLineCap(StrokeLineCap.ROUND);  // Makes the ends of the lines rounded
+        gc.setLineJoin(StrokeLineJoin.ROUND); // Makes the joins between line segments rounded
 
+        // Start drawing the path for smoother lines
+        if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
+            gc.beginPath();
+            gc.moveTo(e.getX(), e.getY()); // Start the path at the mouse press point
+        } else if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            gc.lineTo(e.getX(), e.getY()); // Draw a line to the current mouse position
+            gc.stroke(); // Actually draw the line on the canvas
+        }
     });
 //    SPRAY((e, gc) -> {
 //    }),
