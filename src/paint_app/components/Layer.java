@@ -54,7 +54,6 @@ public class Layer extends Canvas {
         hidden_icon.setFitWidth(20);
         hidden_icon.setFitHeight(20);
 
-        // TODO: replace with button so only the graphic remains
         final var visibility_checkbox = new Button();
         visibility_checkbox.setGraphic(visible_icon);
         visibility_checkbox.setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
