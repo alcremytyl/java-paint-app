@@ -1,12 +1,11 @@
 package paint_app.components;
 
-import javafx.event.EventHandler;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -20,8 +19,6 @@ public class Layer extends Canvas {
     AppState AppState = paint_app.AppState.getInstance();
     String name;
     CheckBox visible_checkbox;
-
-    EventHandler<MouseEvent> handler;
 
     public Layer(String name) {
         super(800, 600);
@@ -54,12 +51,12 @@ public class Layer extends Canvas {
         return this.sidebar_content;
     }
 
-//    public void useGraphicsContext(GraphicsContextUser gc) {
-//        gc.use(getGraphicsContext2D());
-//        this.updatePreview();
-//    }
+    public void useGraphicsContext(GraphicsContextUser gc) {
+        gc.use(getGraphicsContext2D());
+        this.updatePreview();
+    }
 
-    private void updatePreview() {
+    public void updatePreview() {
         final var snap = new SnapshotParameters();
         snap.setFill(Color.WHITE);
         final var shot = this.snapshot(snap, null);
@@ -67,26 +64,23 @@ public class Layer extends Canvas {
     }
 
     public void toSelected() {
-
-        final EventHandler<MouseEvent> handler = e -> {
-            AppState.currentToolProperty().get().getEvent().handle(e, getGraphicsContext2D());
-            updatePreview();
-        };
+//        handler = e -> {
+//            AppState.currentToolProperty().get().getEvent().handle(AppState, e, getGraphicsContext2D());
+//            updatePreview();
+//        };
 
         sidebar_content.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
-
-
-        addEventFilter(MouseEvent.MOUSE_CLICKED, handler);
-        addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
+//        addEventFilter(MouseEvent.MOUSE_CLICKED, handler);
+//        addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
     }
 
     public void unSelect() {
         sidebar_content.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
-        // TODO: removal
-//        removeEventFilter(MouseEvent.MOUSE_CLICKED, );
+//        removeEventFilter(MouseEvent.MOUSE_CLICKED, handler);
+//        removeEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
     }
 
-//    public interface GraphicsContextUser {
-//        void use(GraphicsContext gc);
-//    }
+    public interface GraphicsContextUser {
+        void use(GraphicsContext gc);
+    }
 }

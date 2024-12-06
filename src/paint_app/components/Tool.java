@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import paint_app.AppState;
 
 import java.util.Arrays;
@@ -13,27 +14,38 @@ import java.util.Objects;
 public enum Tool {
 
     // TODO: tool events
-    BRUSH((e, gc) -> {
-        final var color;
+    BRUSH((state, e, gc) -> {
+        final Color color = switch (e.getButton()) {
+            case PRIMARY -> state.primaryColorProperty().get();
+            case SECONDARY -> state.secondaryColorProperty().get();
+            default -> null;
+        };
 
-        gc.setStroke(AppState.pr);
-    }),
-    SPRAY((e, gc) -> {
-    }),
-    CIRCLE((e, gc) -> {
-    }),
-    RECTANGLE((e, gc) -> {
-    }),
-    DROPPER((e, gc) -> {
-    }),
-    TEXT((e, gc) -> {
-    }),
-    SELECT((e, gc) -> {
-    }),
-    ERASER((e, gc) -> {
+        if (color == null) {
+            return;
+        }
+
+        double size = state.brushSizeProperty().get();
+
+        gc.setFill(color);
+        gc.fillOval(e.getX(), e.getY(), size, size);
+
     });
+//    SPRAY((e, gc) -> {
+//    }),
+//    CIRCLE((e, gc) -> {
+//    }),
+//    RECTANGLE((e, gc) -> {
+//    }),
+//    DROPPER((e, gc) -> {
+//    }),
+//    TEXT((e, gc) -> {
+//    }),
+//    SELECT((e, gc) -> {
+//    }),
+//    ERASER((e, gc) -> {
+//    });
 
-    static AppState AppState = paint_app.AppState.getInstance();
     private final ImageView image;
     private final ToolAction event;
 
@@ -65,6 +77,6 @@ public enum Tool {
 
     @FunctionalInterface
     public interface ToolAction {
-        void handle(MouseEvent e, GraphicsContext gc);
+        void handle(AppState AppState, MouseEvent e, GraphicsContext gc);
     }
 }

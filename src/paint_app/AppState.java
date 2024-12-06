@@ -5,7 +5,9 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import paint_app.components.Layer;
@@ -32,6 +34,7 @@ public class AppState {
     private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
 
+//    private final SimpleObjectProperty<Mouse>
 
     private AppState() {
     }
@@ -103,8 +106,8 @@ public class AppState {
 
                     current_layer.set((Layer) canvases.getFirst());
 
-                    w.getChildren().addAll(canvases);
-                    s.getLayers().getChildren().addAll(previews);
+                    w.getChildren().addFirst(canvases.getFirst());
+                    s.getLayers().getChildren().addFirst(previews.getFirst());
 
                 } else if (change.wasRemoved()) {
                     final var canvases = change.getRemoved();
@@ -129,12 +132,26 @@ public class AppState {
             }
         });
 
+        final EventHandler<MouseEvent> handler = e -> {
+            final var layer = current_layer.get();
+
+            if (layer == null) return;
+
+            current_tool.get().getEvent().handle(this, e, layer.getGraphicsContext2D());
+            layer.updatePreview();
+        };
+
         // change background for sidebar version and attach/remove tool listeners
+        w.addEventFilter(MouseEvent.MOUSE_PRESSED, handler);
+        w.addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
+
+        // replace with above
         this.current_layer.addListener((observable, o, n) -> {
-            if (o != null)
-                o.unSelect();
+            logger.info("current layer " + o + " to " + n);
             if (n != null)
                 n.toSelected();
+            if (o != null)
+                o.unSelect();
         });
     }
 }
