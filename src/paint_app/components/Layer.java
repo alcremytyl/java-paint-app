@@ -25,7 +25,6 @@ public class Layer extends Canvas {
     final HBox sidebar_content;
     AppState AppState = paint_app.AppState.getInstance();
     String name;
-//     visible_checkbox;
 
     public Layer(String name) {
         super(800, 600);

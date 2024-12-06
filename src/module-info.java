@@ -5,7 +5,6 @@ module paint.app {
     requires javafx.graphics;
     requires javafx.swt;
     requires javafx.media;
-    requires java.desktop;
     requires jdk.xml.dom;
     requires java.logging;
 
