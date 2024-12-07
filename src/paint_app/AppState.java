@@ -106,7 +106,7 @@ public class AppState {
 
                     current_layer.set((Layer) canvases.getFirst());
 
-                    w.getChildren().addFirst(canvases.getFirst());
+                    w.getChildren().addAll(canvases);
                     s.getLayers().getChildren().addFirst(previews.getFirst());
 
                 } else if (change.wasRemoved()) {
@@ -134,7 +134,6 @@ public class AppState {
 
         final EventHandler<MouseEvent> handler = e -> {
             final var layer = current_layer.get();
-
             if (layer == null) return;
 
             current_tool.get().getEvent().handle(this, e, layer.getGraphicsContext2D());

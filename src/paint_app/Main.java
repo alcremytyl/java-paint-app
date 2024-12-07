@@ -16,8 +16,11 @@ import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
 
 
-// TODO: make helper function for icon getting
+/* TODO:
+    make helper function for icon getting
+    reverse workspace layer ordering
 
+*/
 
 /* References
  * css https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html
