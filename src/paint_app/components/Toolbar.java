@@ -98,8 +98,8 @@ public class Toolbar extends GridPane {
     }
 
     private static VBox createBrushInterface() {
-        final var icons = Tool.getImageViews();
-        return createNodeGrid(icons.size(), icons::get);
+        final var buttons = Tool.getToolButtons();
+        return createNodeGrid(buttons.size(), buttons::get);
     }
 
     private static HBox createColorsInterface() {

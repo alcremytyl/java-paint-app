@@ -1,25 +1,60 @@
 package paint_app.components;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import paint_app.AppState;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public enum Tool {
 
     // TODO: tool events
-    BRUSH((e, gc) -> {
-        final var color;
+    BRUSH((state, e, gc) -> {
+        final var color = getClickColor(state, e);
+        if (color.isEmpty()) return;
 
-        gc.setStroke(AppState.pr);
+        gc.setFill(color.get());
+        gc.setStroke(color.get());
+        gc.setLineWidth(state.brushSizeProperty().get());
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setLineJoin(StrokeLineJoin.ROUND);
+
+        if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
+            gc.beginPath();
+            gc.moveTo(e.getX(), e.getY());
+        } else if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            gc.lineTo(e.getX(), e.getY());
+            gc.stroke();
+        }
     }),
-    SPRAY((e, gc) -> {
-    }),
+    SPRAY((state, e, gc) -> {
+        final var color = getClickColor(state, e);
+        if (color.isEmpty()) return;
+
+        double particles = state.brushSizeProperty().get() * 5 / 3; // temp
+        double size = state.brushSizeProperty().get();
+
+        gc.setFill(color.get());
+
+        for (int i = 0; i < particles; i++) {
+            // mouse + offset
+            double x = e.getX() + Math.random() * size - (size / 2);
+            double y = e.getY() + Math.random() * size - (size / 2);
+
+            gc.fillOval(
+                    x, y, 2, 2
+            );
+        }
+    });
     CIRCLE((e, gc) -> {
         double startX = AppState.getInstance().getStartX();
         double startY = AppState.getInstance().getStartY();
@@ -77,7 +112,6 @@ public enum Tool {
         );
     });
 
-    static AppState AppState = paint_app.AppState.getInstance();
     private final ImageView image;
     private final ToolAction event;
 
@@ -89,18 +123,30 @@ public enum Tool {
         this.image = new ImageView(new Image(file.toString()));
         this.image.setFitWidth(30);
         this.image.setFitHeight(30);
-
-        // trying to do mouseevent in layer
     }
 
-    public static List<ImageView> getImageViews() {
+    public static List<Button> getToolButtons() {
         return Arrays.stream(Tool.values())
                 .map(Tool::getImage)
                 .toList();
     }
 
-    public ImageView getImage() {
-        return this.image;
+    private static Optional<Color> getClickColor(AppState state, MouseEvent e) {
+        return Optional.ofNullable(switch (e.getButton()) {
+            case PRIMARY -> state.primaryColorProperty().get();
+            case SECONDARY -> state.secondaryColorProperty().get();
+            default -> null;
+        });
+    }
+
+    public Button getImage() {
+        final var button = new Button();
+        button.setGraphic(this.image);
+        button.setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
+        button.setOnAction(e -> {
+            AppState.getInstance().currentToolProperty().set(this);
+        });
+        return button;
     }
 
     public ToolAction getEvent() {
@@ -109,6 +155,6 @@ public enum Tool {
 
     @FunctionalInterface
     public interface ToolAction {
-        void handle(MouseEvent e, GraphicsContext gc);
+        void handle(AppState AppState, MouseEvent e, GraphicsContext gc);
     }
 }

@@ -23,6 +23,7 @@ public class Sidebar extends VBox {
         final var hist_label = new Label("History");
         hist_label.setTextFill(InterfaceColors.Text);
         hist_label.setStyle(text_style);
+
         final var history = new Rectangle(300, (double) Main.HEIGHT / 3);
 
         final var layers_label = new Label("Layers");
@@ -54,5 +55,7 @@ public class Sidebar extends VBox {
     public VBox getLayers() {
         return this.layers;
     }
+
+
 }
 

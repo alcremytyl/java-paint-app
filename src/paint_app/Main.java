@@ -15,8 +15,12 @@ import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
 
-import java.util.Random;
 
+/* TODO:
+    make helper function for icon getting
+    reverse workspace layer ordering
+
+*/
 
 /* References
  * css https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html
@@ -50,16 +54,6 @@ public class Main extends Application {
             // TODO: delete when done
             case KeyCode.A:
                 final var aa = new Layer("A" + AppState.layersProperty().size());
-                final var r = new Random();
-                aa.useGraphicsContext(gc -> {
-                    gc.setFill(AppState.primaryColorProperty().get());
-                    gc.fillOval(
-                            Math.abs(r.nextInt() % 500),
-                            Math.abs(r.nextInt() % 500),
-                            Math.abs(r.nextInt() % 500),
-                            Math.abs(r.nextInt() % 500)
-                    );
-                });
                 AppState.layersProperty().add(aa);
                 System.out.println(AppState.layersProperty());
                 break;
@@ -73,8 +67,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-
-
         var root = new HBox();
         root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
 
