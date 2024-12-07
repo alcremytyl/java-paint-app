@@ -21,16 +21,60 @@ public enum Tool {
     SPRAY((e, gc) -> {
     }),
     CIRCLE((e, gc) -> {
+        double startX = AppState.getInstance().getStartX();
+        double startY = AppState.getInstance().getStartY();
+        double width = Math.abs(startX - e.getX());
+        double height = Math.abs(startY - e.getY());
+        gc.setStroke(AppState.getInstance().primaryColorProperty().get());
+        gc.setLineWidth(AppState.getInstance().brushSizeProperty().get());
+        gc.strokeOval(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height)
     }),
     RECTANGLE((e, gc) -> {
+        double startX = AppState.getInstance().getStartX();
+        double startY = AppState.getInstance().getStartY();
+        double width = Math.abs(startX - e.getX());
+        double height = Math.abs(startY - e.getY());
+        gc.setStroke(AppState.getInstance().primaryColorProperty().get());
+        gc.setLineWidth(AppState.getInstance().brushSizeProperty().get());
+        gc.strokeRect(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height)
     }),
     DROPPER((e, gc) -> {
+        var currentLayer = AppState.getInstance().currentLayerProperty().get();
+        if (currentLayer != null) {
+            var snapshot = currentLayer.getCanvas().snapshot(null, null);
+            int x = (int) e.getX();
+            int y = (int) e.getY();
+            if (x >= 0 && y >= 0 && x < snapshot.getWidth() && y < snapshot.getHeight()) {
+                var color = snapshot.getPixelReader().getColor(x, y);
+                AppState.getInstance().primaryColorProperty().set(color);
+            }
+        }
     }),
     TEXT((e, gc) -> {
+        gc.setFill(AppState.getInstance().primaryColorProperty().get());
+        gc.setFont(AppState.getInstance().textFont);
+        String text = AppState.getInstance().getTextToDraw();
+        if (text != null && !text.isEmpty()) {
+            gc.fillText(text, e.getX(), e.getY());
+        }
     }),
     SELECT((e, gc) -> {
+        double startX = AppState.getInstance().getStartX();
+        double startY = AppState.getInstance().getStartY();
+        double width = Math.abs(startX - e.getX());
+        double height = Math.abs(startY - e.getY());
+        gc.setStroke(AppState.getInstance().selectionColor);
+        gc.setLineWidth(1);
+        gc.strokeRect(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height)
     }),
     ERASER((e, gc) -> {
+        double eraserSize = AppState.getInstance().getEraserSize();
+        gc.clearRect(
+            e.getX() - eraserSize / 2;
+            e.getY() - eraserSize / 2;
+            eraserSize,
+            eraserSize
+        );
     });
 
     static AppState AppState = paint_app.AppState.getInstance();
