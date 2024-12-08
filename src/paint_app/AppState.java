@@ -35,6 +35,12 @@ public class AppState {
     private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
 
 //    private final SimpleObjectProperty<Mouse>
+    private final SimpleDoubleProperty startX = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty startY = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty lastX = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty lastY = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty eraserSize = new SimpleDoubleProperty(20.0);
+    private final SimpleObjectProperty<String> textToDraw = new SimpleObjectProperty<>("Enter text here");
 
     private AppState() {
     }
@@ -68,6 +74,78 @@ public class AppState {
 
     public SimpleObjectProperty<Layer> currentLayerProperty() {
         return this.current_layer;
+    }
+
+    public SimpleDoubleProperty startXProperty() {
+        return startX;
+    }
+
+    public SimpleDoubleProperty startYProperty() {
+        return startY;
+    }
+
+    public SimpleDoubleProperty lastXProperty() {
+        return lastX;
+    }
+
+    public SimpleDoubleProperty lastYProperty() {
+        return lastY;
+    }
+
+    public SimpleDoubleProperty eraserSizeProperty() {
+        return eraserSize;
+    }
+
+    public double getStartX() {
+        return startX.get();
+    }
+
+    public void setStartX(double x) {
+        startX.set(x);
+    }
+
+    public double getStartY() {
+        return startY.get();
+    }
+
+    public void setStartY(double y) {
+        startY.set(y);
+    }
+
+    public double getLastX() {
+        return lastX.get();
+    }
+
+    public void setLastX(double x) {
+        lastX.set(x);
+    }
+
+    public double getLastY() {
+        return lastY.get();
+    }
+
+    public void setLastY(double y) {
+        lastY.set(y);
+    }
+
+    public double getEraserSize() {
+        return eraserSize.get();
+    }
+
+    public void setEraserSize(double size) {
+        eraserSize.set();
+    }
+
+    public SimpleObjectProperty<String> textToDrawProperty() {
+        return this.textToDraw;
+    }
+
+    public String getTextToDraw() {
+        return textToDraw.get();
+    }
+
+    public void setTextToDraw(String text) {
+        textToDraw.set(text);
     }
 
     public void resetColors() {
