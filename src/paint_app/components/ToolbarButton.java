@@ -1,21 +1,19 @@
 package paint_app.components;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import paint_app.AppState;
+import paint_app.Helpers;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
-public enum Tool {
+public enum ToolbarButton {
 
     // TODO: tool events
     BRUSH((state, e, gc) -> {
@@ -69,21 +67,16 @@ public enum Tool {
 //    });
 
     private final ImageView image;
-    private final ToolAction event;
+    private final CanvasAction event;
 
-    Tool(ToolAction event) {
-        // if this ever fails, enum values don't line up with file names
-        final var file = Objects.requireNonNull(getClass().getResource("/icons/" + name().toLowerCase() + ".png"));
-
+    ToolbarButton(CanvasAction event) {
         this.event = event;
-        this.image = new ImageView(new Image(file.toString()));
-        this.image.setFitWidth(30);
-        this.image.setFitHeight(30);
+        this.image = Helpers.getIcon(this.name().toLowerCase(), 30, 30);
     }
 
-    public static List<Button> getToolButtons() {
-        return Arrays.stream(Tool.values())
-                .map(Tool::getImage)
+    public static List<ImageView> getToolButtons() {
+        return Arrays.stream(ToolbarButton.values())
+                .map(ToolbarButton::getButton)
                 .toList();
     }
 
@@ -95,22 +88,20 @@ public enum Tool {
         });
     }
 
-    public Button getImage() {
-        final var button = new Button();
-        button.setGraphic(this.image);
+    // TODO: move to constructor
+    public ImageView getButton() {
+        final var button = image;
         button.setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
-        button.setOnAction(e -> {
-            AppState.getInstance().currentToolProperty().set(this);
-        });
+        button.setOnMouseClicked(e -> AppState.getInstance().currentToolProperty().set(this));
         return button;
     }
 
-    public ToolAction getEvent() {
+    public CanvasAction getEvent() {
         return this.event;
     }
 
     @FunctionalInterface
-    public interface ToolAction {
+    public interface CanvasAction {
         void handle(AppState AppState, MouseEvent e, GraphicsContext gc);
     }
 }

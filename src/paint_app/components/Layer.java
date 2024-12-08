@@ -1,29 +1,28 @@
 package paint_app.components;
 
+import javafx.geometry.Pos;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
+import paint_app.AppColors;
 import paint_app.AppState;
-import paint_app.InterfaceColors;
-
-import java.util.Objects;
+import paint_app.Helpers;
 
 public class Layer extends Canvas {
-    final ImageView visible_icon;
-    final ImageView hidden_icon;
-
-
-    final ImageView preview;
+    static final Background SELECTED_BG = AppColors.asBackground(AppColors.Crust);
+    static final Background UNSELECTED_BG = AppColors.asBackground(Color.TRANSPARENT);
+    final AppState AppState = paint_app.AppState.getInstance();
     final HBox sidebar_content;
-    AppState AppState = paint_app.AppState.getInstance();
+    final ImageView hidden_icon;
+    final ImageView preview;
+    final ImageView visible_icon;
     String name;
 
     public Layer(String name) {
@@ -38,35 +37,26 @@ public class Layer extends Canvas {
         sidebar_content.setPrefSize(250, 30);
         sidebar_content.setSpacing(35);
 
-        final var text = new Label(this.name);
-        text.setTextFill(InterfaceColors.Text);
+        final var text = new TextField(this.name);
+        text.setStyle("-fx-text-fill: " + AppColors.asHex(AppColors.Text) + "; -fx-background-color: transparent;");
+        System.out.println(AppColors.asHex(AppColors.Text));
 
-        final var visible_file = Objects.requireNonNull(Layer.class.getResource("/icons/visible.png")).toString();
-        final var hidden_file = Objects.requireNonNull(Layer.class.getResource("/icons/hidden.png")).toString();
-
-        // TODO: center images
-        visible_icon = new ImageView(new Image(visible_file));
-        visible_icon.setFitWidth(20);
-        visible_icon.setFitHeight(20);
-
-        hidden_icon = new ImageView(new Image(hidden_file));
-        hidden_icon.setFitWidth(20);
-        hidden_icon.setFitHeight(20);
+        visible_icon = Helpers.getIcon("visible", 20, 20);
+        hidden_icon = Helpers.getIcon("hidden", 20, 20);
 
         final var visibility_checkbox = new Button();
         visibility_checkbox.setGraphic(visible_icon);
         visibility_checkbox.setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
         visibility_checkbox.setOnAction(e -> {
             setVisible(!isVisible());
-            final var icon = isVisible() ? visible_icon : hidden_icon;
-            visibility_checkbox.setGraphic(icon);
+            visibility_checkbox.setGraphic(isVisible() ? visible_icon : hidden_icon);
         });
 
-
+        sidebar_content.setBackground(AppColors.asBackground(AppColors.Mantle));
+        sidebar_content.setOnMouseClicked(e -> AppState.currentLayerProperty().set(this));
+        sidebar_content.setAlignment(Pos.CENTER_LEFT);
         sidebar_content.getChildren().addAll(visibility_checkbox, preview, text);
-        sidebar_content.setOnMouseClicked(e -> {
-            AppState.currentLayerProperty().set(this);
-        });
+        HBox.setHgrow(sidebar_content, Priority.ALWAYS);
 
         setStyle("-fx-background-color: transparent;");
         updatePreview();
@@ -74,11 +64,6 @@ public class Layer extends Canvas {
 
     public HBox getSidebarContent() {
         return this.sidebar_content;
-    }
-
-    public void useGraphicsContext(GraphicsContextUser gc) {
-        gc.use(getGraphicsContext2D());
-        this.updatePreview();
     }
 
     public void updatePreview() {
@@ -89,11 +74,11 @@ public class Layer extends Canvas {
     }
 
     public void toSelected() {
-        sidebar_content.setBackground(new Background(new BackgroundFill(Color.RED, null, null)));
+        sidebar_content.setBackground(SELECTED_BG);
     }
 
     public void unSelect() {
-        sidebar_content.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+        sidebar_content.setBackground(UNSELECTED_BG);
     }
 
     public interface GraphicsContextUser {

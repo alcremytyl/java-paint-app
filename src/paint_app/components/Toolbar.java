@@ -4,18 +4,17 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import paint_app.AppColors;
 import paint_app.AppState;
-import paint_app.InterfaceColors;
+import paint_app.Helpers;
 
-import java.util.function.Function;
+import java.util.Objects;
 
 public class Toolbar extends GridPane {
     static final Color[] COLORS = {
@@ -40,13 +39,13 @@ public class Toolbar extends GridPane {
 
     public Toolbar() {
         setMaxHeight(100);
-        setBackground(new Background(new BackgroundFill(InterfaceColors.Surface0, null, null)));
-        setBorder(new Border(new BorderStroke(InterfaceColors.Mantle, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
+        setBackground(AppColors.asBackground(AppColors.Surface0));
+        setBorder(new Border(new BorderStroke(AppColors.Mantle, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
         setAlignment(Pos.CENTER);
         setPadding(new Insets(5, 20, 5, 20));
 
         var brush_label = new Label("tools");
-        brush_label.setTextFill(InterfaceColors.Text);
+        brush_label.setTextFill(AppColors.Text);
         brush_label.setStyle("-fx-font-size: 14px; -fx-padding: 4px");
         brush_label.setAlignment(Pos.CENTER);
 
@@ -74,32 +73,10 @@ public class Toolbar extends GridPane {
         }
     }
 
-    private static VBox createNodeGrid(int size, Function<Integer, Node> generator) {
-        var box = new VBox();
-        box.setAlignment(Pos.CENTER);
-
-        var grid = new GridPane();
-        grid.setHgap(5);
-        grid.setVgap(5);
-
-        for (int i = 0; i < size; i++) {
-            var node = generator.apply(i);
-
-            if (size <= 10) {
-                grid.add(node, i, 0);
-            } else {
-                grid.add(node, i / 2, i % 2);
-            }
-        }
-
-
-        box.getChildren().addAll(grid);
-        return box;
-    }
 
     private static VBox createBrushInterface() {
-        final var buttons = Tool.getToolButtons();
-        return createNodeGrid(buttons.size(), buttons::get);
+        final var buttons = ToolbarButton.getToolButtons();
+        return Helpers.createNodeGrid(buttons.size(), buttons::get);
     }
 
     private static HBox createColorsInterface() {
@@ -116,17 +93,26 @@ public class Toolbar extends GridPane {
 
         color_pair.getChildren().addAll(primary_color, secondary_color);
 
-        final var color_selector = createNodeGrid(COLORS.length, i -> {
+        final var color_selector = Helpers.createNodeGrid(COLORS.length, i -> {
             var btn = createColorButton(COLORS[i]);
             btn.setOnMouseClicked(e -> {
-                switch (e.getButton()) {
-                    case MouseButton.PRIMARY:
-                        AppState.primaryColorProperty().set((Color) btn.getFill());
-                        break;
-                    case MouseButton.SECONDARY:
-                        AppState.secondaryColorProperty().set((Color) btn.getFill());
-                        break;
-                }
+                // did it this way as an experiment, and it surprisingly works
+                // use other if this fails
+                Objects.requireNonNull(switch (e.getButton()) {
+                    case PRIMARY -> AppState.primaryColorProperty();
+                    case SECONDARY -> AppState.secondaryColorProperty();
+                    default -> null;
+                }).set((Color) btn.getFill());
+
+
+//                switch (e.getButton()) {
+//                    case MouseButton.PRIMARY:
+//                        AppState.primaryColorProperty().set((Color) btn.getFill());
+//                        break;
+//                    case MouseButton.SECONDARY:
+//                        AppState.secondaryColorProperty().set((Color) btn.getFill());
+//                        break;
+//                }
             });
 
             return btn;
@@ -142,7 +128,7 @@ public class Toolbar extends GridPane {
     private static Circle createColorButton(Color c) {
         final var btn = new Button(" ");
         var circle = new Circle(12, c);
-        circle.setStroke(InterfaceColors.Crust);
+        circle.setStroke(AppColors.Crust);
         circle.setStrokeWidth(2);
         btn.setBackground(new Background(new BackgroundFill(c, null, null)));
         return circle;

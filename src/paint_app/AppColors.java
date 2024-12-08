@@ -1,9 +1,12 @@
 package paint_app;
 
+import javafx.geometry.Insets;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-/// Colors from Catppuccin's [Macchiatto](https://catppuccin.com/palette#Macchiato)
-public class InterfaceColors {
+/// Colors from Catppuccin's
+/// [Macchiatto](https://catppuccin.com/palette#Macchiato)
+public class AppColors {
     public static final Color Rosewater = Color.web("#f4dbd6");
     public static final Color Flamingo = Color.web("#f0c6c6");
     public static final Color Pink = Color.web("#f5bde6");
@@ -30,4 +33,24 @@ public class InterfaceColors {
     public static final Color Base = Color.web("#24273a");
     public static final Color Mantle = Color.web("#1e2030");
     public static final Color Crust = Color.web("#181926");
+
+    public static Background asBackground(Color c) {
+        return new Background(new BackgroundFill(c, null, null));
+    }
+
+    public static Background asBackground(Color c, CornerRadii cr, Insets padding) {
+        return new Background(new BackgroundFill(c, cr, padding));
+    }
+
+    public static Border asBorder(Color c) {
+        return new Border(new BorderStroke(c, null, null, null));
+    }
+
+    public static Border asBorder(Color c, BorderStrokeStyle bss, CornerRadii cr, BorderWidths bw) {
+        return new Border(new BorderStroke(c, bss, cr, bw));
+    }
+
+    public static String asHex(Color c) {
+        return c.toString().substring(2);
+    }
 }

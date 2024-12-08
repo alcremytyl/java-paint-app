@@ -1,10 +1,9 @@
 package paint_app.components;
 
 import javafx.geometry.Pos;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import paint_app.AppColors;
 import paint_app.AppState;
 
 public class Workspace extends StackPane {
@@ -16,7 +15,7 @@ public class Workspace extends StackPane {
     public Workspace() {
         setMinSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setMaxSize(CANVAS_WIDTH, CANVAS_HEIGHT);
-        setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        setBackground(AppColors.asBackground(Color.WHITE));
         setAlignment(Pos.BOTTOM_CENTER);
         getChildren().setAll(AppState.layersProperty());
 

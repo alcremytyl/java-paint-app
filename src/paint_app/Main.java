@@ -7,14 +7,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import paint_app.components.Layer;
 import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
-
 
 /* TODO:
     make helper function for icon getting
@@ -23,7 +24,8 @@ import paint_app.components.Workspace;
 */
 
 /* References
- * css https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html
+ * css
+ * https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html
  * docs https://fxdocs.github.io/docs/html5/
  * API https://openjfx.io/javadoc/23/
  * colors https://catppuccin.com/palette#Macchiato
@@ -36,7 +38,6 @@ public class Main extends Application {
     public static final int HEIGHT = 800;
     public static final int WIDTH = 1280;
     private static final AppState AppState = paint_app.AppState.getInstance();
-
 
     public static void main(String[] args) {
         launch(args);
@@ -54,7 +55,7 @@ public class Main extends Application {
             // TODO: delete when done
             case KeyCode.A:
                 final var aa = new Layer("A" + AppState.layersProperty().size());
-                AppState.layersProperty().add(aa);
+                AppState.layersProperty().addFirst(aa);
                 System.out.println(AppState.layersProperty());
                 break;
 
@@ -68,11 +69,10 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         var root = new HBox();
-        root.setBackground(new Background(new BackgroundFill(InterfaceColors.Base, null, null)));
+        root.setBackground(AppColors.asBackground(AppColors.Base));
 
         var scene = new Scene(root, WIDTH, HEIGHT);
         scene.setOnKeyPressed(Main::handleKeyEvents);
-
 
         final var left_box = new VBox();
         final var tools = new Toolbar();
@@ -80,11 +80,10 @@ public class Main extends Application {
         final var sidebar = new Sidebar();
         final var spacer = new Region();
 
-        spacer.prefHeightProperty()
-                .bind(left_box.heightProperty()
-                        .subtract(workspace.heightProperty())
-                        .subtract(tools.heightProperty())
-                        .divide(2));
+        spacer.prefHeightProperty().bind(left_box.heightProperty()
+                .subtract(workspace.heightProperty())
+                .subtract(tools.heightProperty())
+                .divide(2));
 
         sidebar.setMinHeight(HEIGHT);
 
@@ -101,11 +100,12 @@ public class Main extends Application {
 
         AppState.attachListeners(workspace, sidebar);
 
-        var a = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            // some debug log here
-        }));
+        var a = new Timeline(new KeyFrame(Duration.seconds(1),
+                e
+                        -> {
+                    // some debug log here
+                }));
         a.setCycleCount(-1);
         a.play();
-
     }
 }

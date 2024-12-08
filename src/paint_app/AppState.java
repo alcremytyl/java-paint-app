@@ -12,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import paint_app.components.Layer;
 import paint_app.components.Sidebar;
-import paint_app.components.Tool;
+import paint_app.components.ToolbarButton;
 import paint_app.components.Workspace;
 
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class AppState {
     private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
     private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
 
-    private final SimpleObjectProperty<Tool> current_tool = new SimpleObjectProperty<>(Tool.BRUSH);
+    private final SimpleObjectProperty<ToolbarButton> current_tool = new SimpleObjectProperty<>(ToolbarButton.BRUSH);
     private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
 
     private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -54,7 +54,7 @@ public class AppState {
         return this.secondary_color;
     }
 
-    public SimpleObjectProperty<Tool> currentToolProperty() {
+    public SimpleObjectProperty<ToolbarButton> currentToolProperty() {
         return this.current_tool;
     }
 
@@ -107,9 +107,10 @@ public class AppState {
                     current_layer.set((Layer) canvases.getFirst());
 
                     w.getChildren().addAll(canvases);
-                    s.getLayers().getChildren().addFirst(previews.getFirst());
+                    s.getLayers().getChildren().reversed().addAll(previews);
 
                 } else if (change.wasRemoved()) {
+                    // TODO merge the streams like how it's done in change was added
                     final var canvases = change.getRemoved();
                     final var previews = canvases.stream()
                             .filter(Layer.class::isInstance)
@@ -144,7 +145,6 @@ public class AppState {
         w.addEventFilter(MouseEvent.MOUSE_PRESSED, handler);
         w.addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
 
-        // replace with above
         this.current_layer.addListener((observable, o, n) -> {
             logger.info("current layer " + o + " to " + n);
             if (n != null)
@@ -153,4 +153,6 @@ public class AppState {
                 o.unSelect();
         });
     }
+
+
 }
