@@ -1,7 +1,5 @@
 package paint_app;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,17 +8,22 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import paint_app.components.Layer;
 import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
 
-/* TODO:
-    make helper function for icon getting
-    reverse workspace layer ordering
-
+/* TODO (descending priority):
+    ways to change size of brush
+    finish up toolbar tools
+    finish up sidebar tools
+    shrink layer sidebar text field to fit only itself, expands too far right
+    file saving
+    collapsible sidebar UI elements
+    help menu
+    checkbox for fill/stroke when drawing
+    option to use secondary as stroke when filling
 */
 
 /* References
@@ -44,24 +47,18 @@ public class Main extends Application {
     }
 
     private static void handleKeyEvents(KeyEvent e) {
+        final var color_prop1 = AppState.primaryColorProperty();
+        final var color_prop2 = AppState.primaryColorProperty();
+
         switch (e.getCode()) {
             case KeyCode.X:
-                AppState.swapColors();
+                final var tmp = color_prop1.get();
+                color_prop1.set(color_prop2.get());
+                color_prop2.set(tmp);
                 break;
             case KeyCode.D:
-                AppState.resetColors();
-                break;
-
-            // TODO: delete when done
-            case KeyCode.A:
-                final var aa = new Layer("A" + AppState.layersProperty().size());
-                AppState.layersProperty().addFirst(aa);
-                System.out.println(AppState.layersProperty());
-                break;
-
-            case KeyCode.B:
-                AppState.layersProperty().removeLast();
-                System.out.println(AppState.layersProperty());
+                color_prop1.set(Color.BLACK);
+                color_prop2.set(Color.WHITE);
                 break;
         }
     }
@@ -99,13 +96,5 @@ public class Main extends Application {
         stage.show();
 
         AppState.attachListeners(workspace, sidebar);
-
-        var a = new Timeline(new KeyFrame(Duration.seconds(1),
-                e
-                        -> {
-                    // some debug log here
-                }));
-        a.setCycleCount(-1);
-        a.play();
     }
 }

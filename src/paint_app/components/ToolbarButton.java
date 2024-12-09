@@ -12,6 +12,7 @@ import paint_app.Helpers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public enum ToolbarButton {
 
@@ -52,61 +53,51 @@ public enum ToolbarButton {
                     x, y, 2, 2
             );
         }
-    });
-    CIRCLE((e, gc) -> {
-        double startX = AppState.getInstance().getStartX();
-        double startY = AppState.getInstance().getStartY();
-        double width = Math.abs(startX - e.getX());
-        double height = Math.abs(startY - e.getY());
-        gc.setStroke(AppState.getInstance().primaryColorProperty().get());
-        gc.setLineWidth(AppState.getInstance().brushSizeProperty().get());
-        gc.strokeOval(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height)
     }),
-    RECTANGLE((e, gc) -> {
-        double startX = AppState.getInstance().getStartX();
-        double startY = AppState.getInstance().getStartY();
-        double width = Math.abs(startX - e.getX());
-        double height = Math.abs(startY - e.getY());
-        gc.setStroke(AppState.getInstance().primaryColorProperty().get());
-        gc.setLineWidth(AppState.getInstance().brushSizeProperty().get());
-        gc.strokeRect(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height)
+    OVAL((state, e, gc) -> {
+        releaseDrawShape(state, e, gc, 'o');
     }),
-    DROPPER((e, gc) -> {
-        var currentLayer = AppState.getInstance().currentLayerProperty().get();
+    RECTANGLE((state, e, gc) -> {
+        releaseDrawShape(state, e, gc, 'r');
+    }),
+    DROPPER((state, e, gc) -> {
+        var currentLayer = state.currentLayerProperty().get();
         if (currentLayer != null) {
-            var snapshot = currentLayer.getCanvas().snapshot(null, null);
+            var snapshot = currentLayer.snapshot(null, null);
             int x = (int) e.getX();
             int y = (int) e.getY();
             if (x >= 0 && y >= 0 && x < snapshot.getWidth() && y < snapshot.getHeight()) {
                 var color = snapshot.getPixelReader().getColor(x, y);
-                AppState.getInstance().primaryColorProperty().set(color);
+                state.primaryColorProperty().set(color);
             }
         }
     }),
-    TEXT((e, gc) -> {
-        gc.setFill(AppState.getInstance().primaryColorProperty().get());
-        gc.setFont(AppState.getInstance().textFont);
-        String text = AppState.getInstance().getTextToDraw();
+    TEXT((state, e, gc) -> {
+        gc.setFill(state.primaryColorProperty().get());
+        // TODO:
+//        gc.setFont(state.textFont);
+        String text = state.getTextToDraw();
         if (text != null && !text.isEmpty()) {
             gc.fillText(text, e.getX(), e.getY());
         }
     }),
-    SELECT((e, gc) -> {
-        double startX = AppState.getInstance().getStartX();
-        double startY = AppState.getInstance().getStartY();
-        double width = Math.abs(startX - e.getX());
-        double height = Math.abs(startY - e.getY());
-        gc.setStroke(AppState.getInstance().selectionColor);
-        gc.setLineWidth(1);
-        gc.strokeRect(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height)
-    }),
-    ERASER((e, gc) -> {
-        double eraserSize = AppState.getInstance().getEraserSize();
+    // would take a ton of time to implement, put under "what to improve"
+    //    SELECT((state, e, gc) -> {
+    //        double startX = state.getStartX();
+    //        double startY = state.getStartY();
+    //        double width = Math.abs(startX - e.getX());
+    //        double height = Math.abs(startY - e.getY());
+    //        gc.setStroke(state.selectionColor);
+    //        gc.setLineWidth(1);
+    //        gc.strokeRect(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height);
+    //    }),
+    ERASER((state, e, gc) -> {
+        double size = state.brushSizeProperty().get();
+        // rectangular eraser due to performance issues
         gc.clearRect(
-            e.getX() - eraserSize / 2;
-            e.getY() - eraserSize / 2;
-            eraserSize,
-            eraserSize
+                e.getX() - size / 2,
+                e.getY() - size / 2,
+                size, size
         );
     });
 
@@ -130,6 +121,41 @@ public enum ToolbarButton {
             case SECONDARY -> state.secondaryColorProperty().get();
             default -> null;
         });
+    }
+
+    // using char as workaround to getting the enum name
+    private static void releaseDrawShape(AppState state, MouseEvent e, GraphicsContext gc, char shape) {
+
+        if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
+            state.startXProperty().set(e.getX());
+            state.startYProperty().set(e.getY());
+        } else if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+            // TODO: preview
+        } else if (e.getEventType() == MouseEvent.MOUSE_RELEASED) {
+            final double x1 = state.startXProperty().get();
+            final double y1 = state.startYProperty().get();
+
+            double width = Math.abs(e.getX() - x1);
+            double height = Math.abs(e.getY() - y1);
+
+            double top_x = Math.min(x1, e.getX());
+            double top_y = Math.min(y1, e.getY());
+
+
+            final Consumer<Void> draw = switch (shape) {
+                case 'o' -> (v) -> gc.fillOval(top_x, top_y, width, height);
+                case 'r' -> (v) -> gc.fillRect(top_x, top_y, width, height);
+                default -> null;
+            };
+
+            gc.setStroke(state.primaryColorProperty().get());
+            gc.setLineWidth(state.brushSizeProperty().get());
+            gc.setLineCap(StrokeLineCap.ROUND);
+            gc.setLineJoin(StrokeLineJoin.ROUND);
+
+            if (draw != null) draw.accept(null);
+            else AppState.getInstance().logger.info("no shape draw implemented for " + shape);
+        }
     }
 
     // TODO: move to constructor

@@ -29,18 +29,19 @@ public class AppState {
     private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
 
     private final SimpleObjectProperty<ToolbarButton> current_tool = new SimpleObjectProperty<>(ToolbarButton.BRUSH);
+
     private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
+    private final SimpleDoubleProperty eraser_size = new SimpleDoubleProperty(20.0);
 
     private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
 
-//    private final SimpleObjectProperty<Mouse>
-    private final SimpleDoubleProperty startX = new SimpleDoubleProperty(0);
-    private final SimpleDoubleProperty startY = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty start_x = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty start_y = new SimpleDoubleProperty(0);
     private final SimpleDoubleProperty lastX = new SimpleDoubleProperty(0);
     private final SimpleDoubleProperty lastY = new SimpleDoubleProperty(0);
-    private final SimpleDoubleProperty eraserSize = new SimpleDoubleProperty(20.0);
-    private final SimpleObjectProperty<String> textToDraw = new SimpleObjectProperty<>("Enter text here");
+
+    private final SimpleObjectProperty<String> text_to_draw = new SimpleObjectProperty<>("Enter text here");
 
     private AppState() {
     }
@@ -77,11 +78,11 @@ public class AppState {
     }
 
     public SimpleDoubleProperty startXProperty() {
-        return startX;
+        return start_x;
     }
 
     public SimpleDoubleProperty startYProperty() {
-        return startY;
+        return start_y;
     }
 
     public SimpleDoubleProperty lastXProperty() {
@@ -93,76 +94,21 @@ public class AppState {
     }
 
     public SimpleDoubleProperty eraserSizeProperty() {
-        return eraserSize;
-    }
-
-    public double getStartX() {
-        return startX.get();
-    }
-
-    public void setStartX(double x) {
-        startX.set(x);
-    }
-
-    public double getStartY() {
-        return startY.get();
-    }
-
-    public void setStartY(double y) {
-        startY.set(y);
-    }
-
-    public double getLastX() {
-        return lastX.get();
-    }
-
-    public void setLastX(double x) {
-        lastX.set(x);
-    }
-
-    public double getLastY() {
-        return lastY.get();
-    }
-
-    public void setLastY(double y) {
-        lastY.set(y);
-    }
-
-    public double getEraserSize() {
-        return eraserSize.get();
-    }
-
-    public void setEraserSize(double size) {
-        eraserSize.set();
+        return eraser_size;
     }
 
     public SimpleObjectProperty<String> textToDrawProperty() {
-        return this.textToDraw;
+        return this.text_to_draw;
     }
 
     public String getTextToDraw() {
-        return textToDraw.get();
+        return text_to_draw.get();
     }
 
     public void setTextToDraw(String text) {
-        textToDraw.set(text);
+        text_to_draw.set(text);
     }
 
-    public void resetColors() {
-        logger.info("Resetting colors");
-        primary_color.set(Color.BLACK);
-        secondary_color.set(Color.WHITE);
-    }
-
-    public void swapColors() {
-        logger.info("Swapping colors");
-
-        final var tmp = primary_color.get();
-        primary_color.set(secondary_color.get());
-        secondary_color.set(tmp);
-    }
-
-    // TODO: current layer attach and unattach mouse listeners for tool
     public void attachListeners(Workspace w, Sidebar s) {
         // references for equality checking
         Map<Layer, HBox> layer_pairs = new HashMap<>();
@@ -222,6 +168,7 @@ public class AppState {
         // change background for sidebar version and attach/remove tool listeners
         w.addEventFilter(MouseEvent.MOUSE_PRESSED, handler);
         w.addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
+        w.addEventFilter(MouseEvent.MOUSE_RELEASED, handler);
 
         this.current_layer.addListener((observable, o, n) -> {
             logger.info("current layer " + o + " to " + n);
