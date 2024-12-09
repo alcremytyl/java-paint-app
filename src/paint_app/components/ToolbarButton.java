@@ -125,7 +125,6 @@ public enum ToolbarButton {
 
     // using char as workaround to getting the enum name
     private static void releaseDrawShape(AppState state, MouseEvent e, GraphicsContext gc, char shape) {
-
         if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
             state.startXProperty().set(e.getX());
             state.startYProperty().set(e.getY());
@@ -148,17 +147,18 @@ public enum ToolbarButton {
                 default -> null;
             };
 
-            gc.setStroke(state.primaryColorProperty().get());
-            gc.setLineWidth(state.brushSizeProperty().get());
-            gc.setLineCap(StrokeLineCap.ROUND);
-            gc.setLineJoin(StrokeLineJoin.ROUND);
-
-            if (draw != null) draw.accept(null);
-            else AppState.getInstance().logger.info("no shape draw implemented for " + shape);
+            if (draw != null) {
+                gc.setStroke(state.primaryColorProperty().get());
+                gc.setLineWidth(state.brushSizeProperty().get());
+                gc.setLineCap(StrokeLineCap.ROUND);
+                gc.setLineJoin(StrokeLineJoin.ROUND);
+                draw.accept(null);
+            } else {
+                AppState.getInstance().logger.info("no shape draw implemented for " + shape);
+            }
         }
     }
 
-    // TODO: move to constructor
     public ImageView getButton() {
         final var button = image;
         button.setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
