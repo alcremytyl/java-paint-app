@@ -6,14 +6,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import paint_app.components.Layer;
 import paint_app.components.Sidebar;
 import paint_app.components.ToolbarButton;
 import paint_app.components.Workspace;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 public class AppState {
@@ -112,35 +110,24 @@ public class AppState {
 
     // sync workspace and sidebar to `layers`
     public void synchronizeLayerComponents(Workspace w, Sidebar s) {
-        // references for equality checking
-
         this.layers.addListener((ListChangeListener<? super Node>) change -> {
             while (change.next()) {
-                // on add, append to pairs and set to current_layer
                 if (change.wasAdded()) {
-                    final var added_canvases = change.getAddedSubList();
-                    final List<HBox> previews = added_canvases.stream()
-                            .map(Layer.class::cast)
-                            .map(Layer::getSidebarContent)
-                            .toList();
+                    final var layer = (Layer) change.getAddedSubList().getFirst();
 
-                    current_layer.set((Layer) added_canvases.getFirst());
-
-                    w.getChildren().addAll(added_canvases);
-                    s.getLayers().getChildren().reversed().addAll(previews);
+                    w.getChildren().add(layer);
+                    s.getLayers().getChildren().reversed().add(layer.getSidebarContent());
+                    current_layer.set(layer);
 
                 } else if (change.wasRemoved()) {
-                    final var removed_canvases = change.getRemoved();
+                    final var layer = (Layer) change.getRemoved().getFirst();
+                    final var next = layers.size() > 1 ? layers.getLast() : null;
 
-                    removed_canvases.stream()
-                            .map(Layer.class::cast)
-                            .forEach(layer -> {
-                                w.getChildren().remove(layer);
-                                s.getLayers().getChildren().remove(layer.getSidebarContent());
-                            });
+                    w.getChildren().remove(layer);
+                    s.getLayers().getChildren().remove(layer.getSidebarContent());
 
-                    final var next_layer = !layers.isEmpty() ? layers.getLast() : null;
-                    current_layer.set(next_layer);
+                    System.out.println(next);
+                    current_layer.set(next);
                 }
             }
         });

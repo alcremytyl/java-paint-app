@@ -8,6 +8,7 @@ module paint.app {
     requires jdk.xml.dom;
     requires java.logging;
     requires jdk.jdi;
+    requires org.jetbrains.annotations;
 
     exports paint_app;
     exports paint_app.components;
