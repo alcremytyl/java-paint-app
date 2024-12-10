@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 /// A utility class containing helper methods for the application.
 public class Helpers {
-    static final AppState AppState = paint_app.AppState.getInstance();
+    private static final AppState AppState = paint_app.AppState.getInstance();
 
     /**
      * Retrieves an icon image based on the given name and returns it as an ImageView.

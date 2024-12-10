@@ -17,7 +17,6 @@ import paint_app.components.Workspace;
 /* TODO (descending priority):
     ways to change size of brush
     finish up toolbar tools
-    finish up sidebar tools
     load style.css and replace its placeholders with AppColors
     shrink layer sidebar text field to fit only itself, expands too far right
     file saving
@@ -97,6 +96,6 @@ public class Main extends Application {
         stage.setResizable(false);
         stage.show();
 
-        AppState.attachListeners(workspace, sidebar);
+        AppState.synchronizeLayerComponents(workspace, sidebar);
     }
 }

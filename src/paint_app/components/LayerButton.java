@@ -1,11 +1,15 @@
 package paint_app.components;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import paint_app.AppColors;
 import paint_app.AppState;
 import paint_app.Helpers;
 
 import java.util.Arrays;
-import java.util.List;
 
 public enum LayerButton {
     Add(state -> state.layersProperty().add(new Layer("Untitled"))),
@@ -45,10 +49,22 @@ public enum LayerButton {
         this.icon.setOnMouseClicked(e -> this.event.handle(AppState.getInstance()));
     }
 
-    public static List<ImageView> getButtons() {
-        return Arrays.stream(LayerButton.values())
+    public static HBox getButtons() {
+        final var buttons = Arrays.stream(LayerButton.values())
                 .map(LayerButton::getButton)
+                .peek(img -> HBox.setHgrow(img, Priority.ALWAYS))
                 .toList();
+
+        final var spacing = 300 / (buttons.size() + 1) - 20;
+
+        final var hbox = new HBox();
+        hbox.setPadding(new Insets(10));
+        hbox.setSpacing(spacing);
+        hbox.setBackground(AppColors.asBackground(AppColors.Surface0));
+        hbox.setAlignment(Pos.BOTTOM_CENTER);
+        hbox.getChildren().addAll(buttons);
+
+        return hbox;
     }
 
     public ImageView getButton() {

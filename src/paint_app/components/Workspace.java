@@ -1,6 +1,8 @@
 package paint_app.components;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import paint_app.AppColors;
@@ -18,6 +20,19 @@ public class Workspace extends StackPane {
         setBackground(AppColors.asBackground(Color.WHITE));
         setAlignment(Pos.BOTTOM_CENTER);
         getChildren().setAll(AppState.layersProperty());
+
+
+        final EventHandler<MouseEvent> handler = e -> {
+            final var layer = AppState.currentLayerProperty().get();
+            if (layer == null) return;
+            AppState.currentToolProperty().get().getEvent().handle(AppState, e, layer.getGraphicsContext2D());
+            layer.updatePreview();
+        };
+
+        // change background for sidebar version and attach/remove tool listeners
+        addEventFilter(MouseEvent.MOUSE_PRESSED, handler);
+        addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
+        addEventFilter(MouseEvent.MOUSE_RELEASED, handler);
 
     }
 }

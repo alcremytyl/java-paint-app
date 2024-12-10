@@ -5,9 +5,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import paint_app.components.Layer;
@@ -15,9 +13,7 @@ import paint_app.components.Sidebar;
 import paint_app.components.ToolbarButton;
 import paint_app.components.Workspace;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class AppState {
@@ -27,7 +23,6 @@ public class AppState {
 
     private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
     private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
-
     private final SimpleObjectProperty<ToolbarButton> current_tool = new SimpleObjectProperty<>(ToolbarButton.BRUSH);
 
     private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
@@ -44,6 +39,12 @@ public class AppState {
     private final SimpleObjectProperty<String> text_to_draw = new SimpleObjectProperty<>("Enter text here");
 
     private AppState() {
+        current_layer.addListener((observable, o, n) -> {
+            logger.info("current layer " + o + " to " + n);
+
+            if (n != null) n.toSelected();
+            if (o != null) o.unSelect();
+        });
     }
 
     public static synchronized AppState getInstance() {
@@ -109,75 +110,39 @@ public class AppState {
         text_to_draw.set(text);
     }
 
-    public void attachListeners(Workspace w, Sidebar s) {
+    // sync workspace and sidebar to `layers`
+    public void synchronizeLayerComponents(Workspace w, Sidebar s) {
         // references for equality checking
-        Map<Layer, HBox> layer_pairs = new HashMap<>();
 
-        // sync workspace and sidebar to `layers`
         this.layers.addListener((ListChangeListener<? super Node>) change -> {
             while (change.next()) {
+                // on add, append to pairs and set to current_layer
                 if (change.wasAdded()) {
-                    final var canvases = change.getAddedSubList();
-                    final List<HBox> previews = canvases.stream()
-                            .filter(Layer.class::isInstance)
+                    final var added_canvases = change.getAddedSubList();
+                    final List<HBox> previews = added_canvases.stream()
                             .map(Layer.class::cast)
-                            .map(layer -> {
-                                final var preview = layer.getSidebarContent();
-                                layer_pairs.put(layer, preview);
-                                return preview;
-                            })
+                            .map(Layer::getSidebarContent)
                             .toList();
 
-                    current_layer.set((Layer) canvases.getFirst());
+                    current_layer.set((Layer) added_canvases.getFirst());
 
-                    w.getChildren().addAll(canvases);
+                    w.getChildren().addAll(added_canvases);
                     s.getLayers().getChildren().reversed().addAll(previews);
 
                 } else if (change.wasRemoved()) {
-                    // TODO merge the streams like how it's done in change was added
-                    final var canvases = change.getRemoved();
-                    final var previews = canvases.stream()
-                            .filter(Layer.class::isInstance)
-                            .map(Layer.class::cast)
-                            .map(layer_pairs::get)
-                            .toList();
+                    final var removed_canvases = change.getRemoved();
 
+                    removed_canvases.stream()
+                            .map(Layer.class::cast)
+                            .forEach(layer -> {
+                                w.getChildren().remove(layer);
+                                s.getLayers().getChildren().remove(layer.getSidebarContent());
+                            });
 
                     final var next_layer = !layers.isEmpty() ? layers.getLast() : null;
                     current_layer.set(next_layer);
-
-                    w.getChildren().removeAll(canvases);
-                    s.getLayers().getChildren().removeAll(previews);
-
-                    canvases.stream()
-                            .filter(Layer.class::isInstance)
-                            .map(Layer.class::cast)
-                            .forEach(layer_pairs::remove);
                 }
             }
         });
-
-        final EventHandler<MouseEvent> handler = e -> {
-            final var layer = current_layer.get();
-            if (layer == null) return;
-
-            current_tool.get().getEvent().handle(this, e, layer.getGraphicsContext2D());
-            layer.updatePreview();
-        };
-
-        // change background for sidebar version and attach/remove tool listeners
-        w.addEventFilter(MouseEvent.MOUSE_PRESSED, handler);
-        w.addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
-        w.addEventFilter(MouseEvent.MOUSE_RELEASED, handler);
-
-        this.current_layer.addListener((observable, o, n) -> {
-            logger.info("current layer " + o + " to " + n);
-            if (n != null)
-                n.toSelected();
-            if (o != null)
-                o.unSelect();
-        });
     }
-
-
 }
