@@ -18,6 +18,7 @@ import paint_app.components.Workspace;
     ways to change size of brush
     finish up toolbar tools
     finish up sidebar tools
+    load style.css and replace its placeholders with AppColors
     shrink layer sidebar text field to fit only itself, expands too far right
     file saving
     collapsible sidebar UI elements
@@ -89,6 +90,7 @@ public class Main extends Application {
         left_box.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(left_box, sidebar);
 
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Paint App");
         stage.sizeToScene();

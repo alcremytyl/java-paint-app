@@ -7,6 +7,7 @@ module paint.app {
     requires javafx.media;
     requires jdk.xml.dom;
     requires java.logging;
+    requires jdk.jdi;
 
     exports paint_app;
     exports paint_app.components;

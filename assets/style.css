@@ -7,3 +7,10 @@
     -fx-font-size: 14px;
     -fx-text-alignment: center;
 }
+
+/* Style the title of each TitledPane */
+.titled-pane > .title {
+}
+
+.titled-pane > .content {
+}
