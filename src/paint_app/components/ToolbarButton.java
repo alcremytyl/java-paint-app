@@ -23,7 +23,7 @@ public enum ToolbarButton {
 
         gc.setFill(color.get());
         gc.setStroke(color.get());
-        gc.setLineWidth(state.brushSizeProperty().get());
+        gc.setLineWidth(state.strokeSizeProperty().get());
         gc.setLineCap(StrokeLineCap.ROUND);
         gc.setLineJoin(StrokeLineJoin.ROUND);
 
@@ -39,8 +39,8 @@ public enum ToolbarButton {
         final var color = getClickColor(state, e);
         if (color.isEmpty()) return;
 
-        double particles = state.brushSizeProperty().get() * 5 / 3; // temp
-        double size = state.brushSizeProperty().get();
+        double particles = state.strokeSizeProperty().get() * 5 / 3; // temp
+        double size = state.strokeSizeProperty().get();
 
         gc.setFill(color.get());
 
@@ -54,13 +54,9 @@ public enum ToolbarButton {
             );
         }
     }),
-    OVAL((state, e, gc) -> {
-        releaseDrawShape(state, e, gc, 'o');
-    }),
-    RECTANGLE((state, e, gc) -> {
-        releaseDrawShape(state, e, gc, 'r');
-    }),
-    DROPPER((state, e, gc) -> {
+    OVAL((state, e, gc) -> releaseDrawShape(state, e, gc, 'o')),
+    RECTANGLE((state, e, gc) -> releaseDrawShape(state, e, gc, 'r')),
+    DROPPER((state, e, _) -> {
         var currentLayer = state.currentLayerProperty().get();
         if (currentLayer != null) {
             var snapshot = currentLayer.snapshot(null, null);
@@ -92,7 +88,7 @@ public enum ToolbarButton {
     //        gc.strokeRect(Math.min(startX, e.getX()), Math.min(startY, e.getY()), width, height);
     //    }),
     ERASER((state, e, gc) -> {
-        double size = state.brushSizeProperty().get();
+        double size = state.strokeSizeProperty().get();
         // rectangular eraser due to performance issues
         gc.clearRect(
                 e.getX() - size / 2,
@@ -142,14 +138,14 @@ public enum ToolbarButton {
 
 
             final Consumer<Void> draw = switch (shape) {
-                case 'o' -> (v) -> gc.fillOval(top_x, top_y, width, height);
-                case 'r' -> (v) -> gc.fillRect(top_x, top_y, width, height);
+                case 'o' -> (_) -> gc.fillOval(top_x, top_y, width, height);
+                case 'r' -> (_) -> gc.fillRect(top_x, top_y, width, height);
                 default -> null;
             };
 
             if (draw != null) {
                 gc.setStroke(state.primaryColorProperty().get());
-                gc.setLineWidth(state.brushSizeProperty().get());
+                gc.setLineWidth(state.strokeSizeProperty().get());
                 gc.setLineCap(StrokeLineCap.ROUND);
                 gc.setLineJoin(StrokeLineJoin.ROUND);
                 draw.accept(null);

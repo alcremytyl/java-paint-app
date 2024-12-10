@@ -1,5 +1,6 @@
 package paint_app;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -23,16 +24,15 @@ public class AppState {
     private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
     private final SimpleObjectProperty<ToolbarButton> current_tool = new SimpleObjectProperty<>(ToolbarButton.BRUSH);
 
-    private final SimpleDoubleProperty brush_size = new SimpleDoubleProperty(12.0);
-    private final SimpleDoubleProperty eraser_size = new SimpleDoubleProperty(20.0);
+    private final SimpleDoubleProperty stroke_size = new SimpleDoubleProperty(12.0);
+    private final SimpleBooleanProperty do_stroke = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty do_fill = new SimpleBooleanProperty(true);
 
     private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
 
     private final SimpleDoubleProperty start_x = new SimpleDoubleProperty(0);
     private final SimpleDoubleProperty start_y = new SimpleDoubleProperty(0);
-    private final SimpleDoubleProperty lastX = new SimpleDoubleProperty(0);
-    private final SimpleDoubleProperty lastY = new SimpleDoubleProperty(0);
 
     private final SimpleObjectProperty<String> text_to_draw = new SimpleObjectProperty<>("Enter text here");
 
@@ -64,8 +64,16 @@ public class AppState {
         return this.current_tool;
     }
 
-    public SimpleDoubleProperty brushSizeProperty() {
-        return this.brush_size;
+    public SimpleDoubleProperty strokeSizeProperty() {
+        return this.stroke_size;
+    }
+
+    public SimpleBooleanProperty doStrokeProperty() {
+        return do_stroke;
+    }
+
+    public SimpleBooleanProperty doFillProperty() {
+        return do_fill;
     }
 
     public SimpleListProperty<Layer> layersProperty() {
@@ -82,18 +90,6 @@ public class AppState {
 
     public SimpleDoubleProperty startYProperty() {
         return start_y;
-    }
-
-    public SimpleDoubleProperty lastXProperty() {
-        return lastX;
-    }
-
-    public SimpleDoubleProperty lastYProperty() {
-        return lastY;
-    }
-
-    public SimpleDoubleProperty eraserSizeProperty() {
-        return eraser_size;
     }
 
     public SimpleObjectProperty<String> textToDrawProperty() {

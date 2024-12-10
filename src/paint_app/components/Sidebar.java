@@ -1,11 +1,11 @@
 package paint_app.components;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -43,19 +43,17 @@ public class Sidebar extends VBox {
         layers_scrollpane.setPrefWidth(Double.MAX_VALUE);
         VBox.setVgrow(layers_scrollpane, Priority.ALWAYS);
 
-        /** TODO
-         * add
-         * remove
-         * shift up/down
-         *
-         */
 
         final var tool_config_box = new VBox();
-        tool_config_box.getChildren().addAll(
 
+        // TODO: make this a gridpane
+        tool_config_box.getChildren().addAll(
+                createToolOption("stroke size", "stroke size", AppState.strokeSizeProperty()),
+                createToolOption("fill?", AppState.doFillProperty()),
+                createToolOption("stroke?", AppState.doStrokeProperty())
         );
 
-        final var tool_config = new TitledPane("tool options", tool_config_box);
+        final var tool_config_pane = new TitledPane("tool options", tool_config_box);
 
         final var layer_manager = LayerButton.getButtons();
         final var layer_pane = new TitledPane("layers", layers_scrollpane);
@@ -65,10 +63,42 @@ public class Sidebar extends VBox {
         final var sep = new Separator(Orientation.HORIZONTAL);
         sep.setPadding(new Insets(30, 0, 0, 0));
 
-        getChildren().addAll(hist_label, history, layer_pane, spacer, sep, layer_manager);
+        getChildren().addAll(hist_label, history, tool_config_pane, layer_pane, spacer, sep, layer_manager);
     }
 
     public VBox getLayers() {
         return this.layers;
+    }
+
+    private HBox createToolOption(String name, SimpleBooleanProperty property) {
+        final var box = new HBox();
+        final var cb = new CheckBox();
+
+        cb.setSelected(property.get());
+        cb.setOnMouseClicked(e -> property.set(cb.isSelected()));
+        box.getChildren().addAll(new Label(name), cb);
+
+        return box;
+    }
+
+    private HBox createToolOption(String name, String prompt, SimpleDoubleProperty property) {
+        final var box = new HBox();
+        final var tf = new TextField();
+        tf.setPromptText(prompt);
+
+        tf.textProperty().addListener((_, o, n) -> {
+            try {
+                double d = Math.max(Double.parseDouble(n), 1.0);
+                property.set(d);
+            } catch (NumberFormatException _) {
+                if (n.isEmpty())
+                    property.set(1.0);
+                else
+                    tf.setText(o);
+            }
+        });
+
+        box.getChildren().addAll(new Label(name), tf);
+        return box;
     }
 }
