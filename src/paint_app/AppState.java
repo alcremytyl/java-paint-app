@@ -17,22 +17,25 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 public class AppState {
+    public static final int HEIGHT = 800;
+    public static final int WIDTH = 1280;
+    public static final int MAX_BRUSH_SIZE = 200;
     private static AppState INSTANCE;
-
     public final Logger logger = Logger.getLogger("Paint App");
-    private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
-    private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
-    private final SimpleObjectProperty<ToolbarButton> current_tool = new SimpleObjectProperty<>(ToolbarButton.BRUSH);
-    private final SimpleDoubleProperty stroke_size = new SimpleDoubleProperty(12.0);
-    private final SimpleBooleanProperty do_stroke = new SimpleBooleanProperty(false);
     private final SimpleBooleanProperty do_fill = new SimpleBooleanProperty(true);
-    private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
+    private final SimpleBooleanProperty do_stroke = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty secondary_as_stroke = new SimpleBooleanProperty(true);
     private final SimpleDoubleProperty start_x = new SimpleDoubleProperty(0);
     private final SimpleDoubleProperty start_y = new SimpleDoubleProperty(0);
+    private final SimpleDoubleProperty stroke_size = new SimpleDoubleProperty(12.0);
+    private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
+    private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
+    private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
     private final SimpleObjectProperty<String> text_to_draw = new SimpleObjectProperty<>("Enter text here");
-    private final Stack<Layer> undo_stack = new Stack<>();
+    private final SimpleObjectProperty<ToolbarButton> current_tool = new SimpleObjectProperty<>(ToolbarButton.BRUSH);
     private final Stack<Layer> redo_stack = new Stack<>();
+    private final Stack<Layer> undo_stack = new Stack<>();
     private Workspace workspace;
     private Sidebar sidebar;
 
@@ -67,6 +70,10 @@ public class AppState {
 
     public SimpleObjectProperty<Color> secondaryColorProperty() {
         return this.secondary_color;
+    }
+
+    public SimpleBooleanProperty secondaryAsStrokeProperty() {
+        return this.secondary_as_stroke;
     }
 
     public SimpleObjectProperty<ToolbarButton> currentToolProperty() {

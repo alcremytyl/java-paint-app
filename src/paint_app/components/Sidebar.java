@@ -2,6 +2,7 @@ package paint_app.components;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -10,32 +11,36 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import paint_app.AppState;
 
+import static paint_app.AppState.MAX_BRUSH_SIZE;
+
 public class Sidebar extends VBox {
     private static final AppState AppState = paint_app.AppState.getInstance();
     private final VBox layers = new VBox();
 
     public Sidebar() {
-        final var history = new VBox();
-
-        final var history_pane = new TitledPane("history", history);
+//        final var history = new VBox();
+//        final var history_pane = new TitledPane("HISTORY", history);
 
         final var layers_scrollpane = new ScrollPane(layers);
-        final var layer_pane = new TitledPane("layers", layers_scrollpane);
-//        layers.setSpacing(10);
+        final var layer_pane = new TitledPane("LAYERS", layers_scrollpane);
+        layers.setSpacing(10);
         layers.setPrefWidth(Double.MAX_VALUE);
-//        layers_scrollpane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        layer_pane.getText();
         layers_scrollpane.setFitToWidth(true);
         layers_scrollpane.setFitToHeight(true);
         layers_scrollpane.setPrefWidth(Double.MAX_VALUE);
         VBox.setVgrow(layers_scrollpane, Priority.ALWAYS);
 
         final var tool_config_box = new GridPane();
-        final var tool_pane = new TitledPane("tool options", tool_config_box);
+        tool_config_box.setHgap(10);
+        tool_config_box.setVgap(5);
+        final var tool_pane = new TitledPane("TOOL OPTIONS", tool_config_box);
         addToolOption(tool_config_box, "stroke size", AppState.strokeSizeProperty());
         addToolOption(tool_config_box, "fill", AppState.doFillProperty());
         addToolOption(tool_config_box, "stroke", AppState.doStrokeProperty());
+        addToolOption(tool_config_box, "alt stroke", AppState.secondaryAsStrokeProperty());
 
-        final var pane_group = new VBox(history_pane, tool_pane, layer_pane);
+        final var pane_group = new VBox(/*history_pane,*/ tool_pane, layer_pane);
 
         final var buttons = SidebarButton.getButtons();
 
@@ -43,6 +48,7 @@ public class Sidebar extends VBox {
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
         final var sep = new Separator(Orientation.HORIZONTAL);
+        sep.setPadding(new Insets(0, 10, 0, 10));
 
         setPrefWidth(300);
         getStyleClass().add("sidebar");
@@ -52,10 +58,14 @@ public class Sidebar extends VBox {
     private void addToolOption(GridPane parent, String name, SimpleDoubleProperty property) {
         final var tf = new TextField();
         tf.setPromptText("Input");
-
+        tf.setMaxWidth(60);
         tf.textProperty().addListener((_, o, n) -> {
             try {
                 double d = Math.max(Double.parseDouble(n), 1.0);
+                if (d > MAX_BRUSH_SIZE) {
+                    d = MAX_BRUSH_SIZE;
+                    tf.setText(d + "");
+                }
                 property.set(d);
             } catch (NumberFormatException _) {
                 if (n.isEmpty())

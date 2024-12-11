@@ -12,11 +12,8 @@ import paint_app.Helpers;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public enum ToolbarButton {
-
-    // TODO: tool events
     BRUSH((state, e, gc) -> {
         final var color = getClickColor(state, e);
         if (color.isEmpty()) return;
@@ -69,13 +66,7 @@ public enum ToolbarButton {
         }
     }),
     TEXT((state, e, gc) -> {
-        gc.setFill(state.primaryColorProperty().get());
-        // TODO:
-//        gc.setFont(state.textFont);
-        String text = state.getTextToDraw();
-        if (text != null && !text.isEmpty()) {
-            gc.fillText(text, e.getX(), e.getY());
-        }
+        // TODO
     }),
     // would take a ton of time to implement, put under "what to improve"
     //    SELECT((state, e, gc) -> {
@@ -137,21 +128,33 @@ public enum ToolbarButton {
             double top_y = Math.min(y1, e.getY());
 
 
-            final Consumer<Void> draw = switch (shape) {
-                case 'o' -> (_) -> gc.fillOval(top_x, top_y, width, height);
-                case 'r' -> (_) -> gc.fillRect(top_x, top_y, width, height);
-                default -> null;
-            };
+            gc.setLineWidth(state.strokeSizeProperty().get());
+            // improvement: make this a part of the UI
+            // gc.setLineCap(StrokeLineCap.ROUND);
+            // gc.setLineJoin(StrokeLineJoin.ROUND);
 
-            if (draw != null) {
-                gc.setStroke(state.primaryColorProperty().get());
-                gc.setLineWidth(state.strokeSizeProperty().get());
-                gc.setLineCap(StrokeLineCap.ROUND);
-                gc.setLineJoin(StrokeLineJoin.ROUND);
-                draw.accept(null);
-            } else {
-                AppState.getInstance().logger.info("no shape draw implemented for " + shape);
+            if (state.doStrokeProperty().get()) {
+                final var color = state.secondaryAsStrokeProperty().get()
+                        ? state.secondaryColorProperty()
+                        : state.primaryColorProperty();
+
+                gc.setStroke(color.get());
+                switch (shape) {
+                    case 'o' -> gc.strokeOval(top_x, top_y, width, height);
+                    case 'r' -> gc.strokeRect(top_x, top_y, width, height);
+                    default -> AppState.getInstance().logger.info("no draw stroke implemented for " + shape);
+                }
             }
+
+            if (state.doFillProperty().get()) {
+                gc.setFill(state.primaryColorProperty().get());
+
+                switch (shape) {
+                    case 'o' -> gc.fillOval(top_x, top_y, width, height);
+                    case 'r' -> gc.fillRect(top_x, top_y, width, height);
+                    default -> AppState.getInstance().logger.info("no draw fill implemented for " + shape);
+                }
+            } else gc.setFill(null);
         }
     }
 

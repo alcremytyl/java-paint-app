@@ -1,11 +1,25 @@
 .root {
     -fx-background-color: {{Crust}};
-}
 
+}
 
 .toolbar {
     -fx-background-color: {{Base}};
-    -fx-border-color: transparent {{Rosewater}} {{Rosewater}} transparent;
+    -fx-border-color: transparent transparent {{Rosewater}} transparent;
+    -fx-border-width: 2px;
+    -fx-padding: 5 20 5 20;
+}
+
+.toolbar > * {
+    -fx-padding: 0 50 0 50;
+}
+
+.toolbar  .separator{
+    -fx-padding: 0 0 0 0;
+}
+
+.toolbar .line{
+    -fx-background: {{Flamingo}};
 }
 
 .toolbar .label {
@@ -13,15 +27,15 @@
     -fx-padding: 4px;
 }
 
-
 .sidebar {
     -fx-background-color: {{Mantle}};
+    -fx-border-color: transparent transparent transparent {{Rosewater}};
+    -fx-border-width: 2px;
 }
 
 .titled-pane .header {
     -fx-background-color: {{Base}};
 }
-
 
 .circle {
     -fx-stroke: {{Crust}};
@@ -30,4 +44,53 @@
 
 .label {
     -fx-text-fill: {{Text}};
+}
+
+.titled-pane {
+    -fx-text-fill: {{Text}};
+    -fx-background: transparent;
+}
+
+.titled-pane > .title > .arrow-button > .arrow {
+    -fx-background-color: {{Flamingo}}
+}
+
+/* remove drop shadow */
+.titled-pane:expanded > .title > .arrow-button > .arrow,
+.titled-pane:collapsed > .title > .arrow-button > .arrow {
+    -fx-effect: none;
+}
+
+.titled-pane > .title {
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 10;
+    -fx-font-size: 16px;
+    -fx-background-color: {{Surface0}};
+}
+
+.grid-pane > * {
+    -fx-spacing: 5px;
+
+}
+
+.preview {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+}
+
+.button {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.sidebar-layer {
+    -fx-padding: 5 0 5 0;
+    -fx-spacing: 20;
+}
+
+.sidebar-layer:selected {
+    -fx-background-color: linear-gradient(to bottom right, {{Base}}, {{Surface0}});
+    -fx-border-color: linear-gradient(to bottom right, {{Flamingo}}, {{Peach}});
+    -fx-border-width: 3px;
 }

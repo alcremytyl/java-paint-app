@@ -1,7 +1,6 @@
 package paint_app.components;
 
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -42,32 +41,18 @@ public class Toolbar extends GridPane {
     public Toolbar() {
         setMaxHeight(100);
         getStyleClass().add("toolbar");
-//        setBackground(AppColor.asBackground(AppColor.Surface0));
-//        setBorder(new Border(new BorderStroke(AppColor.Mantle, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
         setAlignment(Pos.CENTER);
-        setPadding(new Insets(5, 20, 5, 20));
-
-        var brush_label = new Label("tools");
-        brush_label.setAlignment(Pos.CENTER);
-
-        var colors_label = new Label("color picker");
-        colors_label.setTextFill(brush_label.getTextFill());
-        colors_label.setStyle(brush_label.getStyle());
-        colors_label.setAlignment(brush_label.getAlignment());
 
         final var brushes = createBrushInterface();
-        brushes.paddingProperty().bind(this.paddingProperty());
-        brushes.alignmentProperty().bind(this.alignmentProperty());
+//        brushes.paddingProperty().bind(this.paddingProperty());
+//        brushes.alignmentProperty().bind(this.alignmentProperty());
 
         final var colors = createColorsInterface();
-        colors.paddingProperty().bind(this.paddingProperty());
-        colors.alignmentProperty().bind(this.alignmentProperty());
+//        colors.paddingProperty().bind(this.paddingProperty());
+//        colors.alignmentProperty().bind(this.alignmentProperty());
 
-        final var sep_1 = new Separator(Orientation.VERTICAL);
-        final var sep_2 = new Separator(Orientation.VERTICAL);
-
-        addRow(0, brushes, sep_1, colors);
-        addRow(1, brush_label, sep_2, colors_label);
+        addRow(0, brushes, new Separator(Orientation.VERTICAL), colors);
+        addRow(1, new Label("tools"), new Separator(Orientation.VERTICAL), new Label("color picker"));
 
         for (var i : getChildren()) {
             GridPane.setHalignment(i, HPos.CENTER);
@@ -91,6 +76,8 @@ public class Toolbar extends GridPane {
         secondary_color.fillProperty().bind(AppState.secondaryColorProperty());
 
         final var color_pair = new VBox(primary_color, secondary_color);
+        color_pair.getChildren().forEach(c -> c.getStyleClass().add("circle"));
+        color_pair.setSpacing(5);
 
         final var color_selector = Helpers.createNodeGrid(COLORS.length, i -> {
             var btn = createColorButton(COLORS[i]);

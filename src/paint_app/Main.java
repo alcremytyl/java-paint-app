@@ -13,6 +13,9 @@ import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
 
+import static paint_app.AppState.HEIGHT;
+import static paint_app.AppState.WIDTH;
+
 /* TODO (descending priority):
     debug history feature (to the dungeon we go)
     finish up toolbar tools
@@ -31,10 +34,6 @@ import paint_app.components.Workspace;
  */
 
 public class Main extends Application {
-    public static final double ZOOM_FACTOR = 1.0;
-    public static final double ZOOM_SPEED = 0.1;
-    public static final int HEIGHT = 800;
-    public static final int WIDTH = 1280;
     private static final AppState AppState = paint_app.AppState.getInstance();
 
     public static void main(String[] args) {
@@ -101,8 +100,6 @@ public class Main extends Application {
         stage.sizeToScene();
         stage.setResizable(false);
         stage.show();
-
-//        System.out.println(Helpers.loadCss());
 
         AppState.synchronizeLayerComponents(workspace, sidebar);
     }

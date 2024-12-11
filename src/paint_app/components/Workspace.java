@@ -3,7 +3,6 @@ package paint_app.components;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -21,7 +20,7 @@ public class Workspace extends StackPane {
     public static final int CANVAS_HEIGHT = 600;
 
     private static final AppState AppState = paint_app.AppState.getInstance();
-    private static final TextField temp_textfield = new TextField();
+//    private static final TextField temp_textfield = new TextField();
 
     final StackPane layer_pane = new StackPane();
 
