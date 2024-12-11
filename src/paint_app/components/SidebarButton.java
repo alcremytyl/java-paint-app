@@ -1,7 +1,9 @@
 package paint_app.components;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.control.Separator;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -11,7 +13,7 @@ import paint_app.Helpers;
 
 import java.util.Arrays;
 
-public enum LayerButton {
+public enum SidebarButton {
     Add(state -> state.layersProperty().add(new Layer("Untitled"))),
     Remove(state -> state.layersProperty().remove(state.currentLayerProperty().get())),
     ShiftUp(state -> {
@@ -38,31 +40,38 @@ public enum LayerButton {
         } else {
             current.set(layers.get(idx - 1));
         }
+    }),
+    Save(state -> state.saveWorkspaceAsImage(state.workspaceProperty().get())),
+    Undo(state -> {
+        state.undo();
+    }),
+    Redo(state -> {
+        state.redo();
     });
 
     private final ImageView icon;
     private final LayerAction event;
 
-    LayerButton(LayerAction event) {
+    SidebarButton(LayerAction event) {
         this.event = event;
         this.icon = Helpers.getIcon(this.name().toLowerCase(), 30, 30);
         this.icon.setOnMouseClicked(e -> this.event.handle(AppState.getInstance()));
     }
 
     public static HBox getButtons() {
-        final var buttons = Arrays.stream(LayerButton.values())
-                .map(LayerButton::getButton)
+        final var buttons = Arrays.stream(SidebarButton.values())
+                .map(SidebarButton::getButton)
                 .peek(img -> HBox.setHgrow(img, Priority.ALWAYS))
                 .toList();
 
-        final var spacing = 300 / (buttons.size() + 1) - 20;
 
         final var hbox = new HBox();
         hbox.setPadding(new Insets(10));
-        hbox.setSpacing(spacing);
+        hbox.setSpacing(5);
         hbox.setBackground(AppColors.asBackground(AppColors.Surface0));
         hbox.setAlignment(Pos.BOTTOM_CENTER);
         hbox.getChildren().addAll(buttons);
+        hbox.getChildren().add(4, new Separator(Orientation.VERTICAL));
 
         return hbox;
     }

@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -15,7 +15,7 @@ import paint_app.AppState;
 import paint_app.Main;
 
 public class Sidebar extends VBox {
-    private final AppState AppState = paint_app.AppState.getInstance();
+    private static final AppState AppState = paint_app.AppState.getInstance();
     private final VBox layers = new VBox();
 
     public Sidebar() {
@@ -44,18 +44,14 @@ public class Sidebar extends VBox {
         VBox.setVgrow(layers_scrollpane, Priority.ALWAYS);
 
 
-        final var tool_config_box = new VBox();
+        final var tool_config_box = new GridPane();
 
-        // TODO: make this a gridpane
-        tool_config_box.getChildren().addAll(
-                createToolOption("stroke size", "stroke size", AppState.strokeSizeProperty()),
-                createToolOption("fill?", AppState.doFillProperty()),
-                createToolOption("stroke?", AppState.doStrokeProperty())
-        );
+        addToolOption(tool_config_box, "stroke size", AppState.strokeSizeProperty());
+        addToolOption(tool_config_box, "fill", AppState.doFillProperty());
+        addToolOption(tool_config_box, "stroke", AppState.doStrokeProperty());
 
         final var tool_config_pane = new TitledPane("tool options", tool_config_box);
-
-        final var layer_manager = LayerButton.getButtons();
+        final var layer_manager = SidebarButton.getButtons();
         final var layer_pane = new TitledPane("layers", layers_scrollpane);
         final var spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -66,25 +62,9 @@ public class Sidebar extends VBox {
         getChildren().addAll(hist_label, history, tool_config_pane, layer_pane, spacer, sep, layer_manager);
     }
 
-    public VBox getLayers() {
-        return this.layers;
-    }
-
-    private HBox createToolOption(String name, SimpleBooleanProperty property) {
-        final var box = new HBox();
-        final var cb = new CheckBox();
-
-        cb.setSelected(property.get());
-        cb.setOnMouseClicked(e -> property.set(cb.isSelected()));
-        box.getChildren().addAll(new Label(name), cb);
-
-        return box;
-    }
-
-    private HBox createToolOption(String name, String prompt, SimpleDoubleProperty property) {
-        final var box = new HBox();
+    private void addToolOption(GridPane parent, String name, SimpleDoubleProperty property) {
         final var tf = new TextField();
-        tf.setPromptText(prompt);
+        tf.setPromptText("Input");
 
         tf.textProperty().addListener((_, o, n) -> {
             try {
@@ -98,7 +78,18 @@ public class Sidebar extends VBox {
             }
         });
 
-        box.getChildren().addAll(new Label(name), tf);
-        return box;
+        parent.addRow(parent.getRowCount(), new Label(name), tf);
+    }
+
+    private void addToolOption(GridPane parent, String name, SimpleBooleanProperty property) {
+        final var cb = new CheckBox();
+        cb.setSelected(property.get());
+        cb.setOnMouseClicked(e -> property.set(cb.isSelected()));
+
+        parent.addRow(parent.getRowCount(), new Label(name), cb);
+    }
+
+    public VBox getLayers() {
+        return this.layers;
     }
 }

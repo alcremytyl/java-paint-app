@@ -8,21 +8,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import paint_app.components.Layer;
 import paint_app.components.Sidebar;
 import paint_app.components.ToolbarButton;
 import paint_app.components.Workspace;
 
-import java.util.logging.Logger;
-import java.util.Stack;
-
 import java.io.File;
-import javafx.stage.FileChooser;
+import java.util.Stack;
+import java.util.logging.Logger;
 
 public class AppState {
     private static AppState INSTANCE;
 
     public final Logger logger = Logger.getLogger("Paint App");
+
+    private final SimpleObjectProperty<Workspace> workspace_property = new SimpleObjectProperty<>(null);
 
     private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
     private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
@@ -57,6 +58,10 @@ public class AppState {
             INSTANCE = new AppState();
         }
         return INSTANCE;
+    }
+
+    public SimpleObjectProperty<Workspace> workspaceProperty() {
+        return this.workspace_property;
     }
 
     public SimpleObjectProperty<Color> primaryColorProperty() {
@@ -165,14 +170,15 @@ public class AppState {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Workspace");
         fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("PNG Files", "*.png"),
-            new FileChooser.ExtensionFilter("JPEG Files", "*.jpg"),
-            new FileChooser.ExtensionFilter("All Files", "*.*")
+                new FileChooser.ExtensionFilter("PNG Files", "*.png"),
+                new FileChooser.ExtensionFilter("JPEG Files", "*.jpg"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
         );
 
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
-            String ext = fileChooser.getSelectedExtensionFilter().getExtensions().get(0).replace("*.", "");
+            String ext = fileChooser.getSelectedExtensionFilter().getExtensions().getFirst().replace("*.", "");
+            System.out.print(file + " || " + ext);
             workspace.saveAsImage(file);
         }
     }

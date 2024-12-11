@@ -14,16 +14,15 @@ import paint_app.components.Sidebar;
 import paint_app.components.Toolbar;
 import paint_app.components.Workspace;
 
+import java.util.Objects;
+
 /* TODO (descending priority):
-    ways to change size of brush
+    debug history feature (to the dungeon we go)
     finish up toolbar tools
     load style.css and replace its placeholders with AppColors
     shrink layer sidebar text field to fit only itself, expands too far right
     file saving
-    collapsible sidebar UI elements
     help menu
-    checkbox for fill/stroke when drawing
-    option to use secondary as stroke when filling
 */
 
 /* References
@@ -89,7 +88,7 @@ public class Main extends Application {
         left_box.setAlignment(Pos.TOP_CENTER);
         root.getChildren().addAll(left_box, sidebar);
 
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Paint App");
         stage.sizeToScene();
@@ -97,5 +96,6 @@ public class Main extends Application {
         stage.show();
 
         AppState.synchronizeLayerComponents(workspace, sidebar);
+        AppState.workspaceProperty().set(workspace);
     }
 }

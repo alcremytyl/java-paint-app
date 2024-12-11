@@ -27,7 +27,6 @@ public class Workspace extends StackPane {
         setAlignment(Pos.BOTTOM_CENTER);
         getChildren().setAll(AppState.layersProperty());
 
-
         final EventHandler<MouseEvent> handler = e -> {
             final var layer = AppState.currentLayerProperty().get();
             if (layer == null) return;
