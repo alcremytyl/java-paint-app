@@ -1,31 +1,37 @@
 package paint_app.components;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import paint_app.AppColors;
+import paint_app.AppColor;
 import paint_app.AppState;
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class Workspace extends StackPane {
-    private static final int CANVAS_WIDTH = 800;
-    private static final int CANVAS_HEIGHT = 600;
+    public static final int CANVAS_WIDTH = 800;
+    public static final int CANVAS_HEIGHT = 600;
 
     private static final AppState AppState = paint_app.AppState.getInstance();
+    private static final TextField temp_textfield = new TextField();
+
+    final StackPane layer_pane = new StackPane();
 
     public Workspace() {
         setMinSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setMaxSize(CANVAS_WIDTH, CANVAS_HEIGHT);
-        setBackground(AppColors.asBackground(Color.WHITE));
-        setAlignment(Pos.BOTTOM_CENTER);
-        getChildren().setAll(AppState.layersProperty());
+
+        layer_pane.setBackground(AppColor.asBackground(Color.WHITE));
+        layer_pane.setAlignment(Pos.BOTTOM_CENTER);
+        layer_pane.getChildren().setAll(AppState.layersProperty());
 
         final EventHandler<MouseEvent> handler = e -> {
             final var layer = AppState.currentLayerProperty().get();
@@ -38,29 +44,29 @@ public class Workspace extends StackPane {
         addEventFilter(MouseEvent.MOUSE_PRESSED, handler);
         addEventFilter(MouseEvent.MOUSE_DRAGGED, handler);
         addEventFilter(MouseEvent.MOUSE_RELEASED, handler);
-
-        addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+        addEventFilter(MouseEvent.MOUSE_PRESSED, _ -> {
             final var layer = AppState.currentLayerProperty().get();
             if (layer != null) {
                 AppState.saveState(layer);
             }
         });
 
-    }
-
-    public WritableImage captureWorkspace() {
-        WritableImage image = new WritableImage((int) getWidth(), (int) getHeight());
-        this.snapshot(null, image);
-        return image;
+        getChildren().addAll(layer_pane);
     }
 
     public void saveAsImage(File file) {
-        WritableImage image = captureWorkspace();
+        WritableImage image = new WritableImage(CANVAS_WIDTH, CANVAS_HEIGHT);
+        this.snapshot(null, image);
+
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
         } catch (IOException e) {
-            e.printStackTrace();
+            AppState.logger.log(Level.SEVERE, "Error while saving", e);
         }
+    }
+
+    public StackPane getLayers() {
+        return this.layer_pane;
     }
 
 }

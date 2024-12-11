@@ -8,13 +8,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import paint_app.components.Layer;
 import paint_app.components.Sidebar;
 import paint_app.components.ToolbarButton;
 import paint_app.components.Workspace;
 
-import java.io.File;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -22,27 +20,21 @@ public class AppState {
     private static AppState INSTANCE;
 
     public final Logger logger = Logger.getLogger("Paint App");
-
-    private final SimpleObjectProperty<Workspace> workspace_property = new SimpleObjectProperty<>(null);
-
     private final SimpleObjectProperty<Color> primary_color = new SimpleObjectProperty<>(Color.BLACK);
     private final SimpleObjectProperty<Color> secondary_color = new SimpleObjectProperty<>(Color.WHITE);
     private final SimpleObjectProperty<ToolbarButton> current_tool = new SimpleObjectProperty<>(ToolbarButton.BRUSH);
-
     private final SimpleDoubleProperty stroke_size = new SimpleDoubleProperty(12.0);
     private final SimpleBooleanProperty do_stroke = new SimpleBooleanProperty(false);
     private final SimpleBooleanProperty do_fill = new SimpleBooleanProperty(true);
-
     private final SimpleListProperty<Layer> layers = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SimpleObjectProperty<Layer> current_layer = new SimpleObjectProperty<>(null);
-
     private final SimpleDoubleProperty start_x = new SimpleDoubleProperty(0);
     private final SimpleDoubleProperty start_y = new SimpleDoubleProperty(0);
-
     private final SimpleObjectProperty<String> text_to_draw = new SimpleObjectProperty<>("Enter text here");
-
-    private final Stack<Layer> undoStack = new Stack<>();
-    private final Stack<Layer> redoStack = new Stack<>();
+    private final Stack<Layer> undo_stack = new Stack<>();
+    private final Stack<Layer> redo_stack = new Stack<>();
+    private Workspace workspace;
+    private Sidebar sidebar;
 
     private AppState() {
         current_layer.addListener((observable, o, n) -> {
@@ -60,8 +52,13 @@ public class AppState {
         return INSTANCE;
     }
 
-    public SimpleObjectProperty<Workspace> workspaceProperty() {
-        return this.workspace_property;
+
+    public Workspace getWorkspace() {
+        return this.workspace;
+    }
+
+    public Sidebar getSidebar() {
+        return this.sidebar;
     }
 
     public SimpleObjectProperty<Color> primaryColorProperty() {
@@ -117,23 +114,23 @@ public class AppState {
     }
 
     public void saveState(Layer layer) {
-        undoStack.push(cloneLayer(layer));
-        redoStack.clear();
+        undo_stack.push(cloneLayer(layer));
+        redo_stack.clear();
     }
 
     public void undo() {
-        if (!undoStack.isEmpty()) {
-            Layer lastState = undoStack.pop();
-            redoStack.push(cloneLayer(currentLayerProperty().get()));
-            currentLayerProperty().get().restoreState(lastState);
+        if (!undo_stack.isEmpty()) {
+            Layer lastState = undo_stack.pop();
+            redo_stack.push(cloneLayer(current_layer.get()));
+            current_layer.get().restoreState(lastState);
         }
     }
 
     public void redo() {
-        if (!redoStack.isEmpty()) {
-            Layer nextState = redoStack.pop();
-            undoStack.push(cloneLayer(currentLayerProperty().get()));
-            currentLayerProperty().get().restoreState(nextState);
+        if (!redo_stack.isEmpty()) {
+            Layer nextState = redo_stack.pop();
+            undo_stack.push(cloneLayer(currentLayerProperty().get()));
+            current_layer.get().restoreState(nextState);
         }
     }
 
@@ -142,45 +139,31 @@ public class AppState {
     }
 
     // sync workspace and sidebar to `layers`
-    public void synchronizeLayerComponents(Workspace w, Sidebar s) {
+    public void synchronizeLayerComponents(Workspace workspace, Sidebar sidebar) {
+        this.workspace = workspace;
+        this.sidebar = sidebar;
+
         this.layers.addListener((ListChangeListener<? super Node>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
                     final var layer = (Layer) change.getAddedSubList().getFirst();
 
-                    w.getChildren().add(layer);
-                    s.getLayers().getChildren().reversed().add(layer.getSidebarContent());
+                    workspace.getLayers().getChildren().add(layer);
+                    sidebar.getLayers().getChildren().reversed().add(layer.getSidebarContent());
                     current_layer.set(layer);
 
                 } else if (change.wasRemoved()) {
                     final var layer = (Layer) change.getRemoved().getFirst();
                     final var next = layers.size() > 1 ? layers.getLast() : null;
 
-                    w.getChildren().remove(layer);
-                    s.getLayers().getChildren().remove(layer.getSidebarContent());
+                    workspace.getChildren().remove(layer);
+                    sidebar.getLayers().getChildren().remove(layer.getSidebarContent());
 
                     System.out.println(next);
                     current_layer.set(next);
                 }
             }
         });
-    }
-
-    public void saveWorkspaceAsImage(Workspace workspace) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Workspace");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("PNG Files", "*.png"),
-                new FileChooser.ExtensionFilter("JPEG Files", "*.jpg"),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
-        );
-
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            String ext = fileChooser.getSelectedExtensionFilter().getExtensions().getFirst().replace("*.", "");
-            System.out.print(file + " || " + ext);
-            workspace.saveAsImage(file);
-        }
     }
 
 }

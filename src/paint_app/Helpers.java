@@ -2,12 +2,17 @@ package paint_app;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
+import javafx.scene.control.Alert;
+import javafx.scene.effect.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import paint_app.components.Layer;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Function;
 
 /// A utility class containing helper methods for the application.
@@ -33,7 +38,24 @@ public class Helpers {
             System.exit(1);
         }
 
-        return new ImageView(new Image(resource.toString()));
+        final var to_white = new ColorAdjust();
+        to_white.setBrightness(1);
+
+        final var add_border = new DropShadow();
+        add_border.setColor(Color.BLACK);
+        add_border.setRadius(7);
+        add_border.setSpread(1);
+        add_border.setBlurType(BlurType.ONE_PASS_BOX);
+
+        final var effects = new Blend();
+        effects.setMode(BlendMode.SRC_OVER);
+        effects.setTopInput(to_white);
+        effects.setBottomInput(add_border);
+
+        final var image = new ImageView(resource.toString());
+        image.setEffect(effects);
+
+        return image;
     }
 
     /**
@@ -88,5 +110,35 @@ public class Helpers {
 
         box.getChildren().addAll(grid);
         return box;
+    }
+
+    /**
+     * Displays an informational alert with the specified message.
+     *
+     * @param text The content message to display in the alert.
+     */
+    public static void showAlert(String text) {
+        final var alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Paint App");
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+        alert.show();
+    }
+
+    public static String loadCss() {
+        String source = "";
+
+        try {
+            Path path = Path.of(Objects.requireNonNull(Helpers.class.getResource("/style.css")).toURI());
+            source = Files.readString(path);
+
+        } catch (Exception e) {
+
+        }
+        for (var c : AppColor.values()) {
+            source = source.replace("{{" + c.name() + "}}", c.asHex());
+        }
+
+        return source;
     }
 }

@@ -157,7 +157,7 @@ public enum ToolbarButton {
 
     public ImageView getButton() {
         final var button = image;
-        button.setStyle("-fx-background-color: transparent; -fx-border-width: 0;");
+//        button.setStyle("");
         button.setOnMouseClicked(e -> AppState.getInstance().currentToolProperty().set(this));
         return button;
     }

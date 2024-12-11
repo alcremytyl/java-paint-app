@@ -1,16 +1,33 @@
-.label {
-    -fx-text-fill: #cad3f5;
+.root {
+    -fx-background-color: {{Crust}};
 }
 
-.toolbox-label {
-    -fx-font-style: italic;
+
+.toolbar {
+    -fx-background-color: {{Base}};
+    -fx-border-color: transparent {{Rosewater}} {{Rosewater}} transparent;
+}
+
+.toolbar .label {
     -fx-font-size: 14px;
-    -fx-text-alignment: center;
+    -fx-padding: 4px;
 }
 
-/* Style the title of each TitledPane */
-.titled-pane > .title {
+
+.sidebar {
+    -fx-background-color: {{Mantle}};
 }
 
-.titled-pane > .content {
+.titled-pane .header {
+    -fx-background-color: {{Base}};
+}
+
+
+.circle {
+    -fx-stroke: {{Crust}};
+    -fx-stroke-width: 2px;
+}
+
+.label {
+    -fx-text-fill: {{Text}};
 }
