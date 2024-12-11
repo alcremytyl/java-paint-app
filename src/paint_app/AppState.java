@@ -14,6 +14,10 @@ import paint_app.components.ToolbarButton;
 import paint_app.components.Workspace;
 
 import java.util.logging.Logger;
+import java.util.Stack;
+
+import java.io.File;
+import javafx.stage.FileChooser;
 
 public class AppState {
     private static AppState INSTANCE;
@@ -35,6 +39,9 @@ public class AppState {
     private final SimpleDoubleProperty start_y = new SimpleDoubleProperty(0);
 
     private final SimpleObjectProperty<String> text_to_draw = new SimpleObjectProperty<>("Enter text here");
+
+    private final Stack<Layer> undoStack = new Stack<>();
+    private final Stack<Layer> redoStack = new Stack<>();
 
     private AppState() {
         current_layer.addListener((observable, o, n) -> {
@@ -104,6 +111,31 @@ public class AppState {
         text_to_draw.set(text);
     }
 
+    public void saveState(Layer layer) {
+        undoStack.push(cloneLayer(layer));
+        redoStack.clear();
+    }
+
+    public void undo() {
+        if (!undoStack.isEmpty()) {
+            Layer lastState = undoStack.pop();
+            redoStack.push(cloneLayer(currentLayerProperty().get()));
+            currentLayerProperty().get().restoreState(lastState);
+        }
+    }
+
+    public void redo() {
+        if (!redoStack.isEmpty()) {
+            Layer nextState = redoStack.pop();
+            undoStack.push(cloneLayer(currentLayerProperty().get()));
+            currentLayerProperty().get().restoreState(nextState);
+        }
+    }
+
+    private Layer cloneLayer(Layer layer) {
+        return layer.clone();
+    }
+
     // sync workspace and sidebar to `layers`
     public void synchronizeLayerComponents(Workspace w, Sidebar s) {
         this.layers.addListener((ListChangeListener<? super Node>) change -> {
@@ -128,4 +160,21 @@ public class AppState {
             }
         });
     }
+
+    public void saveWorkspaceAsImage(Workspace workspace) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Workspace");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("PNG Files", "*.png"),
+            new FileChooser.ExtensionFilter("JPEG Files", "*.jpg"),
+            new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            String ext = fileChooser.getSelectedExtensionFilter().getExtensions().get(0).replace("*.", "");
+            workspace.saveAsImage(file);
+        }
+    }
+
 }

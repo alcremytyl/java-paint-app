@@ -15,7 +15,7 @@ import paint_app.AppColors;
 import paint_app.AppState;
 import paint_app.Helpers;
 
-public class Layer extends Canvas {
+public class Layer extends Canvas implements Cloneable{
     static final Background SELECTED_BG = AppColors.asBackground(AppColors.Crust);
     static final Background UNSELECTED_BG = AppColors.asBackground(Color.TRANSPARENT);
     final AppState AppState = paint_app.AppState.getInstance();
@@ -84,4 +84,26 @@ public class Layer extends Canvas {
     public interface GraphicsContextUser {
         void use(GraphicsContext gc);
     }
+
+    public Layer clone() {
+        Layer clonedLayer = new Layer(this.name);
+        
+        var gc = clonedLayer.getGraphicsContext2D();
+        gc.drawImage(this.snapshot(null, null), 0, 0);
+
+        clonedLayer.sidebar_content.setBackground(this.sidebar_content.getBackground());
+        return clonedLayer;
+    }
+
+    public void restoreState(Layer layer) {
+        this.getGraphicsContext2D().clearRect(0, 0, this.getWidth(), this.getHeight());
+
+        this.getGraphicsContext2D().drawImage(layer.snapshot(null, null), 0, 0);
+
+        this.name = layer.name;
+        this.sidebar_content.setBackground(layer.sidebar_content.getBackground());
+
+        this.updatePreview();
+    }
+
 }

@@ -9,6 +9,8 @@ module paint.app {
     requires java.logging;
     requires jdk.jdi;
     requires org.jetbrains.annotations;
+    requires java.desktop;
+    requires javafx.swing;
 
     exports paint_app;
     exports paint_app.components;
