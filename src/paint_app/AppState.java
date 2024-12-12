@@ -145,7 +145,12 @@ public class AppState {
         return layer.clone();
     }
 
-    // sync workspace and sidebar to `layers`
+    /**
+     * Synchronizes the workspace and sidebar with the layer components.
+     *
+     * @param workspace The workspace to be synchronized.
+     * @param sidebar   The sidebar to be synchronized.
+     */
     public void synchronizeLayerComponents(Workspace workspace, Sidebar sidebar) {
         this.workspace = workspace;
         this.sidebar = sidebar;

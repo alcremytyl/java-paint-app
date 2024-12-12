@@ -17,6 +17,7 @@ import paint_app.Helpers;
 
 import java.util.Objects;
 
+/// Represents the toolbar in the paint application, providing brush and color options. */
 public class Toolbar extends GridPane {
     static final Color[] COLORS = {
             Color.web("#000000"), Color.web("#FFFFFF"),
@@ -115,8 +116,6 @@ public class Toolbar extends GridPane {
     private static Circle createColorButton(Color c) {
         final var btn = new Button(" ");
         var circle = new Circle(12, c);
-//        circle.setStroke(AppColor.Crust);
-//        circle.setStrokeWidth(2);
         btn.setBackground(AppColor.asBackground(c));
         return circle;
     }

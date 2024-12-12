@@ -16,6 +16,9 @@ import javafx.scene.text.Text;
 import paint_app.AppState;
 import paint_app.Helpers;
 
+/**
+ * Represents a Layer for {@link paint_app.components.Workspace}
+ */
 public class Layer extends Canvas implements Cloneable {
     static final Background SELECTED_BG = null;
     static final Background UNSELECTED_BG = null;
@@ -71,10 +74,16 @@ public class Layer extends Canvas implements Cloneable {
         updatePreview();
     }
 
+    /**
+     * Returns the sidebar content.
+     *
+     * @return The HBox representing the sidebar content.
+     */
     public HBox getSidebarContent() {
         return this.sidebar_content;
     }
 
+    /// Updates the side content preview.
     public void updatePreview() {
         final var snap = new SnapshotParameters();
         snap.setFill(Color.WHITE);
@@ -82,11 +91,12 @@ public class Layer extends Canvas implements Cloneable {
         preview.setImage(shot);
     }
 
+    ///  Applies `selected` theme
     public void toSelected() {
-//        sidebar_content.setBackground(SELECTED_BG);
         sidebar_content.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true);
     }
 
+    ///  Removes `selected` theme
     public void unSelect() {
 //        sidebar_content.setBackground(UNSELECTED_BG);
         sidebar_content.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false);
@@ -102,6 +112,11 @@ public class Layer extends Canvas implements Cloneable {
         return clonedLayer;
     }
 
+    /**
+     * Restores the state of the layer from another layer.
+     *
+     * @param layer The layer from which to restore the state.
+     */
     public void restoreState(Layer layer) {
         this.getGraphicsContext2D().clearRect(0, 0, this.getWidth(), this.getHeight());
 

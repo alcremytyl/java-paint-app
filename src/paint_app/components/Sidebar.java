@@ -13,6 +13,7 @@ import paint_app.AppState;
 
 import static paint_app.AppState.MAX_BRUSH_SIZE;
 
+/// Represents the sidebar of the paint application, containing tool options and layer management.
 public class Sidebar extends VBox {
     private static final AppState AppState = paint_app.AppState.getInstance();
     private final VBox layers = new VBox();
@@ -55,6 +56,13 @@ public class Sidebar extends VBox {
         getChildren().addAll(pane_group, spacer, sep, buttons);
     }
 
+    /**
+     * Adds a tool option to the GridPane.
+     *
+     * @param parent   The {@link javafx.scene.layout.GridPane} to which the tool option will be added.
+     * @param name     The name of the tool option.
+     * @param property The {@link javafx.beans.property.Property} bound to the tool option.
+     */
     private void addToolOption(GridPane parent, String name, SimpleDoubleProperty property) {
         final var tf = new TextField();
         tf.setPromptText("Input");
@@ -78,6 +86,13 @@ public class Sidebar extends VBox {
         parent.addRow(parent.getRowCount(), new Label(name), tf);
     }
 
+    /**
+     * Adds a tool option to the GridPane.
+     *
+     * @param parent   The {@link javafx.scene.layout.GridPane} to which the tool option will be added.
+     * @param name     The name of the tool option.
+     * @param property The {@link javafx.beans.property.Property} bound to the tool option.
+     */
     private void addToolOption(GridPane parent, String name, SimpleBooleanProperty property) {
         final var cb = new CheckBox();
         cb.setSelected(property.get());

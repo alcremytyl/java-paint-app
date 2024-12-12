@@ -53,6 +53,11 @@ public class Workspace extends StackPane {
         getChildren().addAll(layer_pane);
     }
 
+    /**
+     * Saves the current canvas as an image file.
+     *
+     * @param file The file to save the image to.
+     */
     public void saveAsImage(File file) {
         WritableImage image = new WritableImage(CANVAS_WIDTH, CANVAS_HEIGHT);
         this.snapshot(null, image);

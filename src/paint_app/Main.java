@@ -16,14 +16,6 @@ import paint_app.components.Workspace;
 import static paint_app.AppState.HEIGHT;
 import static paint_app.AppState.WIDTH;
 
-/* TODO (descending priority):
-    debug history feature (to the dungeon we go)
-    finish up toolbar tools
-    load style.css and replace its placeholders with AppColors
-    shrink layer sidebar text field to fit only itself, expands too far right
-    help menu
-*/
-
 /* References
  * css
  * https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html
@@ -40,9 +32,10 @@ public class Main extends Application {
         launch(args);
     }
 
+    ///  Event handler
     private static void handleKeyEvents(KeyEvent e) {
         final var color_prop1 = AppState.primaryColorProperty();
-        final var color_prop2 = AppState.primaryColorProperty();
+        final var color_prop2 = AppState.secondaryColorProperty();
         final var current = AppState.currentLayerProperty().get();
 
         switch (e.getCode()) {

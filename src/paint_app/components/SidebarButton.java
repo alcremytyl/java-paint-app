@@ -13,7 +13,9 @@ import paint_app.Helpers;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
+/// Enum representing buttons in the sidebar with their respective actions.
 public enum SidebarButton {
     Add(state -> state.layersProperty().add(new Layer("Untitled"))),
     Remove(SidebarButton::removeCurrent),
@@ -24,12 +26,12 @@ public enum SidebarButton {
     Redo(AppState::redo);
 
     private final ImageView button;
-    private final LayerAction event;
+    private final Consumer<AppState> event;
 
-    SidebarButton(LayerAction event) {
+    SidebarButton(Consumer<AppState> event) {
         this.event = event;
         this.button = Helpers.getIcon(this.name().toLowerCase(), 30, 30);
-        this.button.setOnMouseClicked(e -> this.event.handle(AppState.getInstance()));
+        this.button.setOnMouseClicked(e -> this.event.accept(AppState.getInstance()));
     }
 
     public static HBox getButtons() {
@@ -110,10 +112,5 @@ public enum SidebarButton {
 
     public ImageView getButton() {
         return this.button;
-    }
-
-    @FunctionalInterface
-    public interface LayerAction {
-        void handle(AppState state);
     }
 }

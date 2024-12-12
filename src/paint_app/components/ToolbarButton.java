@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+///  Enum representing buttons on the toolbar
 public enum ToolbarButton {
     BRUSH((state, e, gc) -> {
         final var color = getClickColor(state, e);
@@ -102,6 +103,7 @@ public enum ToolbarButton {
                 .toList();
     }
 
+    ///  Returns optional {@link Color} based on which mouse button was clicked.
     private static Optional<Color> getClickColor(AppState state, MouseEvent e) {
         return Optional.ofNullable(switch (e.getButton()) {
             case PRIMARY -> state.primaryColorProperty().get();
@@ -110,7 +112,15 @@ public enum ToolbarButton {
         });
     }
 
-    // using char as workaround to getting the enum name
+    /**
+     * Handles the drawing of shapes on mouse events.
+     * Using char as workaround to getting the enum name
+     *
+     * @param state The application state.
+     * @param e     The mouse event.
+     * @param gc    The graphics context to draw on.
+     * @param shape The shape to be drawn ('o' for oval, 'r' for rectangle).
+     */
     private static void releaseDrawShape(AppState state, MouseEvent e, GraphicsContext gc, char shape) {
         if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
             state.startXProperty().set(e.getX());
@@ -169,6 +179,7 @@ public enum ToolbarButton {
         return this.event;
     }
 
+    /// Action to be performed on layer
     @FunctionalInterface
     public interface CanvasAction {
         void handle(AppState AppState, MouseEvent e, GraphicsContext gc);
